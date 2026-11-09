@@ -93,3 +93,11 @@ Verified real login/logout, CSRF/Origin, empty onboarding/data, all four migrati
 ## Public access follow-up — 2026-11-09
 
 The private instance above was promoted, preserving the existing owner/password and database, to **https://87.107.160.160:8443** at the user's request. The existing IP certificate is trusted by normal curl/Node HTTPS verification; Nginx exposes a new TLS-only listener while existing 80/443 virtual-host files retain their hashes. Caddy remains internal and forwards validated proxy headers. API now issues `__Host-sarvin.sid` with Secure/HttpOnly/SameSite=Lax and rejects the former localhost HTTP Origin. Public smoke, login/private API access, CSRF/Origin checks, API restart/session persistence and logout passed. The old SSH forwarding was cancelled. Backup service was updated to public config and ran successfully. See QA for renewal-test status. SP-19-06 is Done; checklist is 181/210 with 29 open.
+
+## CI/CD follow-up — 2026-11-09
+
+Automatic main/master deployment is configured; details and recovery instructions
+are in [CI/CD operations](ci-cd.md). Host gateway, dedicated restricted SSH key and
+GitHub production environment are installed. Local boundary/recovery checks and
+the existing backup service passed; the first GitHub pipeline result is recorded
+below when verified. The canonical 181/210 checklist is unchanged.

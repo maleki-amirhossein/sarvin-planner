@@ -136,3 +136,17 @@ Public verification with normal certificate validation (no TLS bypass): login pa
 Renewal verification: the first manual command resolved to Ubuntu's older `/usr/bin/certbot` 2.9, which cannot process this IP certificate. Inspection showed the existing timer correctly uses `/opt/echoa-certbot/bin/certbot` 5.8. Re-ran `renew --cert-name echoa-api-ip --dry-run --run-deploy-hooks --no-random-sleep-on-renew` with that configured executable: all simulated renewals succeeded, including successful Nginx validation/reload. The active production certificate was not replaced by the dry-run; the existing timer/hook were left unchanged. Always use the service's executable for manual renewal checks.
 
 Updated the management wrapper and daily backup service to include public config; the backup service ran successfully. App health and unchanged healthy Echoa containers were confirmed. Nginx site access logs are disabled; its error log is covered by the existing daily rotated/compressed 14-file nginx policy. App Docker logs remain bounded. Configuration hashes are recorded in the private deployment receipt; app images remain release `20261109-101631-c81a785606b2`. Lint/diff checks passed. Browser control, real server reboot, actual reading-write acceptance and automatic off-server retention/notifications remain deferred/unverified. SP-19-06 is **Done**; checklist is **181/210 Done, 29 open**.
+
+## CI/CD setup — 2026-11-09
+
+Added main/master push deployment and PR verification in GitHub Actions, pinned
+actions, Node 24/pnpm 10.34.9, disposable PostgreSQL acceptance, immutable amd64
+packages, checksums, restricted SSH and host-owned runtime configuration. Eight
+local boundary/recovery tests passed, including unsafe archive rejection, applied
+migration immutability, no-schema rollback and migration forward-repair behavior.
+Repository lint, shell syntax and workflow lint passed (installed actionlint does
+not yet recognize GitHub's documented `concurrency.queue`, so that diagnostic was
+excluded). Production environment restricts deployments to main/master. The actual
+restricted key rejected `whoami`; fixed Compose validated and scheduled backup
+service reran successfully. First GitHub deployment verification is pending below.
+No browser control, owner reset, production fixtures or unrelated service changes.

@@ -147,3 +147,17 @@ Private echoa release `20261109-101631-c81a785606b2` is healthy under `/opt/sarv
 ## Public HTTPS promotion — 2026-11-09
 
 The user subsequently requested public access. Current URL: **https://87.107.160.160:8443**, using the existing valid Let's Encrypt IP certificate through a dedicated host Nginx listener. Existing Nginx 80/443 virtual hosts are unchanged. `compose.public-proxy.yaml` follows base+tunnel configs, forces Secure cookies, disables insecure-local mode and permits only the public HTTPS origin. Caddy stays on server loopback 18080 and trusts only the host edge gateway via `infra/caddy/Caddyfile.nginx`. `/opt/sarvin-planner/manage` and the backup service now use mode-600 `shared/.env.server` plus the public overlay. Do not run the private-only wrapper/settings under an enabled public listener. The owner, password, DB and images were preserved; local private credential record URL was updated. SSH forwarding was cancelled because it is no longer needed. SP-19-06 is Done; detailed verification and remaining checks are in the QA report.
+
+## CI/CD follow-up — 2026-11-09
+
+`.github/workflows/ci-cd.yml` verifies pushes/PRs and deploys successful main/master
+pushes to public echoa. See `docs/implementation/ci-cd.md`. Both branches share the
+same deployment/database. Never expose deployment secrets to PR jobs. The runner
+uses disposable PostgreSQL; production must never receive fixtures or provisioning.
+Host-managed Compose/backup files live under `shared/runtime`; `manage` reads the
+current release's `images.env`. Application releases do not execute repository
+shell scripts as root. Gateway changes require administrator review/installation.
+No-migration failures can roll back images; attempted schema changes require forward
+repair and must never trigger automatic data restore. Preserve current/previous
+images, all backups and unrelated Echoa services. Eight deployment boundary/recovery
+tests passed; actual workflow verification is recorded in QA and handoff.

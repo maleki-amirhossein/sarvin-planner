@@ -824,6 +824,8 @@ Completed tasks below have actual verification evidence. The repository copy is 
 
 | 2026-11-09 | SP-19-06 / public access | Done | Promoted the existing server instance to IP HTTPS on host Nginx 8443, preserving account/data and existing vhosts. Exact HTTPS origin, Secure cookies, trusted host gateway and loopback upstream isolation enforced. | Public TLS/smoke/login/private reads/CSRF, forwarding sanitization, API restart/session and logout passed. Config validator rejected insecure cookie, HTTP origin and public upstream bindings; backup rerun succeeded. | compose.public-proxy.yaml; infra/nginx/sarvin-echoa.conf; infra/caddy/Caddyfile.nginx; scripts/ops/check-public-proxy.mjs; qa-report.md | Custom domain, automated off-server retention/notifications and remaining browser/reboot checks stay open. |
 
+| 2026-11-09 | CI/CD follow-up | In progress | Configured main/master Actions deployment, restricted SSH gateway, host-owned runtime, backups and migration-aware recovery. | Eight boundary/recovery tests, lint/syntax, restricted-key denial and real backup service passed; first Actions run pending. | .github/workflows/ci-cd.yml; scripts/ci; ci-cd.md | Verify first pushed pipeline through public HTTPS. |
+
 ## 12. Handoff Status
 
 ```text

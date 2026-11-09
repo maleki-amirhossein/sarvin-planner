@@ -1,0 +1,109 @@
+name: CI and deploy
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never interrupt a live migration. Main and master share one deployment queue.
+concurrency:
+  group: sarvin-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || 'production' }}
+  cancel-in-progress: false
+  queue: max
+
+jobs:
+  verify-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:18-bookworm
+        env:
+          POSTGRES_USER: sarvin_ci
+          POSTGRES_PASSWORD: disposable_ci_database
+          POSTGRES_DB: sarvin_ci
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U sarvin_ci -d sarvin_ci"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      DATABASE_URL: postgresql://sarvin_ci:disposable_ci_database@localhost:5432/sarvin_ci
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+      - name: Install pinned dependencies
+        run: |
+          npm install --global pnpm@10.34.9
+          pnpm install --frozen-lockfile
+      - name: Verify application and deployment boundaries
+        run: |
+          pnpm contracts:check
+          pnpm lint
+          pnpm typecheck
+          pnpm test
+          python3 -m unittest discover -s scripts/ci -p 'test_*.py' -v
+          pnpm build
+          pnpm test:database
+          pnpm test:auth
+          pnpm test:domain
+      - name: Build immutable amd64 release
+        if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        run: bash scripts/ci/package.sh
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        with:
+          name: release-${{ github.sha }}-${{ github.run_attempt }}
+          path: .local/ci-bundle.tar
+          include-hidden-files: true
+          compression-level: 0
+          retention-days: 3
+          if-no-files-found: error
+
+  deploy:
+    needs: verify-build
+    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment:
+      name: production
+      url: https://87.107.160.160:8443
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-${{ github.sha }}-${{ github.run_attempt }}
+          path: release
+      - name: Deploy over restricted SSH
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ vars.DEPLOY_KNOWN_HOSTS }}
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+        run: |
+          set -euo pipefail
+          umask 077
+          mkdir -p "$RUNNER_TEMP/sarvin-ssh"
+          trap 'rm -rf "$RUNNER_TEMP/sarvin-ssh"' EXIT
+          printf '%s\n' "$DEPLOY_KEY" > "$RUNNER_TEMP/sarvin-ssh/key"
+          printf '%s\n' "$KNOWN_HOSTS" > "$RUNNER_TEMP/sarvin-ssh/known_hosts"
+          checksum=$(sha256sum release/ci-bundle.tar | cut -d ' ' -f 1)
+          ssh -T -i "$RUNNER_TEMP/sarvin-ssh/key" \
+            -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile="$RUNNER_TEMP/sarvin-ssh/known_hosts" \
+            -o ConnectTimeout=30 -o ServerAliveInterval=15 -o ServerAliveCountMax=8 \
+            "root@$DEPLOY_HOST" \
+            "deploy $GITHUB_SHA $GITHUB_RUN_NUMBER $GITHUB_RUN_ATTEMPT $checksum" \
+            < release/ci-bundle.tar
+      - name: Verify public HTTPS
+        run: |
+          curl --fail --silent --show-error --retry 5 --retry-delay 5 https://87.107.160.160:8443/api/health
+          curl --fail --silent --show-error https://87.107.160.160:8443/login -o /dev/null
+          printf 'Deployed %s to https://87.107.160.160:8443\n' "$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"

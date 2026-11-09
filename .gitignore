@@ -13,3 +13,5 @@ apps/api/src/generated/
 !.env.production.example
 !.env.tunnel.example
 .local/
+__pycache__/
+*.pyc
