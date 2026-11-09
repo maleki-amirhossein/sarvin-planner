@@ -20,6 +20,7 @@ import { QueryState } from "./query-state";
 import { Empty } from "./planner-parts";
 import { FormFeedback, units, useFormAction } from "./form-support";
 import { JalaliDatePicker } from "./jalali-date-picker";
+import { PwaInstall } from "./pwa-provider";
 export function SettingsPage() {
   const settings = useApi("getSettings"),
     session = useSession(),
@@ -51,6 +52,7 @@ export function SettingsPage() {
           برنامه‌های ثابت و فضای شخصی تو
         </p>
       </div>
+      <PwaInstall />
       <section className="surface space-y-4 p-5">
         <h2>زمان و هدف پیش‌فرض</h2>
         <QueryState query={settings} />

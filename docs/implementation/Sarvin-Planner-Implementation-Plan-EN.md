@@ -74,7 +74,7 @@ The user must be able to capture tasks, assign time slots, view daily and weekly
 - Non-academic reading is independent of university classes. Attending a class does not increase the personal reading goal.
 - Fixed commitments cannot normally be dragged or resized. Change them through their dedicated form or an exception for that occurrence.
 - Show a visible scheduling-conflict warning. An intentional overlap can be saved after explicit user confirmation; do not automatically delete or move events.
-- Version one is online. Clearly communicate disconnection. Offline writes, PWA installation, and push notifications are not version-one commitments.
+- Version one is online. Clearly communicate disconnection. Offline writes and push notifications are not version-one commitments. PWA installation was subsequently authorized on 2026-11-09 and is tracked separately below.
 - Refresh server data after mutations, tab focus, and reconnection. Version one does not require WebSockets.
 
 ## 3. Reference Images and Design Rules
@@ -593,7 +593,7 @@ These are previously discussed ideas or future enhancements, not confirmed versi
 
 - Reading timer or Pomodoro.
 - Browser notifications, push, email, or scheduled reminders.
-- PWA installation, offline writes, and offline conflict resolution.
+- Offline writes and offline conflict resolution. PWA installation was subsequently authorized on 2026-11-09; see the follow-up checklist below.
 - Automatic breaks/commute buffers, energy labels, and a low-availability day mode.
 - Smart free-slot suggestions or dividing the remaining goal into sessions.
 - Google Calendar, ICS, or university-calendar synchronization.
@@ -854,3 +854,14 @@ Next action: Secure local owner setup, then resume the remaining acceptance chec
 ```
 
 Final completion rule: A core feature is Done only when it works with real data and the real API, survives refresh, is usable on mobile and desktop, and has passed the relevant verification.
+
+
+## PWA follow-up — authorized 2026-11-09 (outside original 210 tasks)
+
+- [x] **SP-PWA-01 — Done (source/local HTTP):** Persian install manifest, standalone metadata, approved-logo installation icons, settings install prompt/manual guidance and public-only offline fallback. Production web build, typecheck, targeted lint, 9 web tests and PWA HTTP smoke passed. See QA/handoff execution evidence.
+- [ ] **SP-PWA-02 — Pending:** publish release and verify PWA assets/headers through public HTTPS.
+- [ ] **SP-PWA-03 — Pending:** actual Android/iOS installation, standalone launch/login, offline/reconnect and update behavior with an open draft; browser control remains deferred.
+
+| Date | Task | Status | Implementation | Verification | Evidence | Limits |
+| --- | --- | --- | --- | --- | --- | --- |
+| 2026-11-09 | SP-PWA-01 | **Done (source/local HTTP)** | Installable Persian metadata, icons, settings install guidance and isolated public offline fallback. | Web build/types/lint; 9 tests; PWA HTTP smoke on port 3105; separate Docker API smoke passed. | apps/web/src/lib/pwa.test.ts; scripts/pwa-smoke.mjs; qa-report.md; handoff.md | Host API upstream unavailable; no deployment/device installation claimed. Original 181/210 unchanged; Desktop mirror unavailable. |

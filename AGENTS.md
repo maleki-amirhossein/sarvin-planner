@@ -186,3 +186,15 @@ Login icon/text and calendar card border refinements were deployed in `bbfb887`
 through successful Actions run 42586421851. Public smoke, served assets, session
 continuity and post-deployment class/work schedule readback passed. Concurrent
 uncommitted calendar day-background styling was not part of that release.
+
+## PWA follow-up — 2026-11-09
+
+Source now includes a Persian install manifest, derived install icons and settings
+install guidance. The production-only service worker caches only the static public
+`/offline.html`; never add API, authenticated HTML, RSC or mutation caching without
+an explicit offline-data design. Bump its cache version when changing the fallback.
+Do not force activation/reloads that discard editor drafts. The original logo is
+unchanged. `scripts/pwa-smoke.mjs` checks a built web instance's metadata/assets and
+worker headers. Local production build/HTTP checks and 9 web tests passed; actual
+device installation and public rollout remain pending. No domain is required when
+the IP address has trusted HTTPS. Browser control remains deferred.

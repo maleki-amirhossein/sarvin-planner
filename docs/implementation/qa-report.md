@@ -197,3 +197,31 @@ UI deployment: [Actions run 42586421851](https://github.com/maleki-amirhossein/s
 ## Calendar day backgrounds — 2026-11-09
 
 **Done (source change):** set shared calendar day headers and time-grid lanes to solid white, including today, replacing the green today gradient. The date badge and event colors remain available for identification. CSS formatting and diff checks passed. Browser control remains deferred; no visual verification or deployment claimed. Original checklist remains 181/210.
+
+
+## PWA installation follow-up — 2026-11-09
+
+**Done (source and local HTTP verification):** added a Persian RTL manifest with
+stable origin-relative identity/scope, standalone launch at `/today`, theme/Apple
+metadata, 192/512px and maskable PNG icons derived from the unchanged approved logo,
+and a settings installation button with Safari/manual browser instructions. The
+root provider captures installation events across client navigation. The production
+service worker caches only `/offline.html`; API requests, writes, RSC and external
+requests pass through. Online documents are fetched without being stored. Updates
+wait for existing tabs to close; no forced reload or draft loss is introduced.
+
+Verification: web production build, typecheck, targeted ESLint, diff checks and all
+9 web tests passed (4 new PWA tests cover icon dimensions, cache isolation/cleanup,
+fresh online navigation, offline fallback and request bypass).
+`WEB_URL=http://127.0.0.1:3105 node scripts/pwa-smoke.mjs` passed on a temporary
+production web process: manifest link/content, all four PNG dimensions, worker MIME
+and no-store headers, and Persian offline page. Full same-origin smoke initially
+failed because the configured host API upstream was unavailable (readiness 500).
+Separate web/API smoke passed with `API_URL=http://localhost:8080`; this is not a
+claim of host proxy verification. Public HTTPS readiness returned 200 before edits.
+
+No deployment or real-device installation is claimed. Browser control remains
+deferred; Android/iOS standalone installation and browser-managed worker lifecycle
+remain unchecked. Original checklist remains 181/210; this user-requested follow-up
+is tracked separately. Concurrent task/category/calendar edits were preserved.
+Desktop mirror remains unavailable; no moved document was recreated.

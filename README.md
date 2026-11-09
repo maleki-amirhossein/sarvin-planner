@@ -131,3 +131,23 @@ https://87.107.160.160:8443 through GitHub Actions. Pull requests run tests only
 See [CI/CD operations](docs/implementation/ci-cd.md) for credentials, immutable
 releases, backups, rollback limits and infrastructure updates. Workflow history:
 [CI and deploy](https://github.com/maleki-amirhossein/sarvin-planner/actions/workflows/ci-cd.yml).
+
+## PWA installation
+
+The web app includes a Persian RTL install manifest, standalone mode, logo-derived
+192/512px and maskable icons, an Apple touch icon, and installation guidance in
+Settings. Supporting browsers show a native install button there when available.
+On iPhone/iPad, open Safari → Share → Add to Home Screen. A custom domain is not
+required: the public IP URL works with its trusted HTTPS certificate; localhost
+is supported for development. HTTP on a non-loopback IP does not qualify.
+
+The service worker is registered only in production on secure contexts. It caches
+only a self-contained public offline page. API responses, authenticated pages, RSC
+payloads and writes are never stored by the worker. The planner remains online;
+this does not add offline editing or push notifications. Worker updates wait for
+existing tabs to close and never force a reload over an unsaved draft. Increment
+`CACHE` in `apps/web/public/sw.js` when changing the offline page. The original logo
+is unchanged; installation icons are separate derived files.
+
+Verify a built web instance with `WEB_URL=http://localhost:3000 node scripts/pwa-smoke.mjs`.
+This checks HTTP metadata/assets/headers, not actual device installation.

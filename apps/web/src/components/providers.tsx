@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { DirectionProvider } from "@radix-ui/react-direction";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PwaProvider } from "./pwa-provider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [client] = useState(
@@ -20,7 +21,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, [client]);
   return (
     <DirectionProvider dir="rtl">
-      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+      <QueryClientProvider client={client}>
+        <PwaProvider>{children}</PwaProvider>
+      </QueryClientProvider>
     </DirectionProvider>
   );
 }
