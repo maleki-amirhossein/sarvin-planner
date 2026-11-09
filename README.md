@@ -101,7 +101,7 @@ Open http://localhost:8080. Startup order is healthy database → successful mig
 
 ## Migrations, backup and deployment
 
-Four committed migrations define the schema, ownership constraints, recurrence identities, interval checks and series audit/version fields. Do not edit applied migrations.
+Versioned migrations define the schema, ownership constraints, recurrence identities, interval checks, series audit/version fields and the music task category. Do not edit applied migrations.
 
 ```sh
 pnpm db:generate

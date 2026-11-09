@@ -13,6 +13,7 @@ enum Category {
   reading
   work
   university
+  music
   other
 }
 

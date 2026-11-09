@@ -20,7 +20,7 @@ const filtersSchema = z
     ...pageFields,
     status: z.enum(["incomplete", "completed"]).optional(),
     category: z
-      .enum(["personal", "reading", "work", "university", "other"])
+      .enum(["personal", "reading", "work", "university", "music", "other"])
       .optional(),
     priority: z.enum(["low", "normal", "high"]).optional(),
     q: z.string().max(200).optional(),

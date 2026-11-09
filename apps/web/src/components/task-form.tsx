@@ -579,9 +579,7 @@ export function TaskForm({
           <Button
             variant="outline"
             disabled={action.pending}
-            onClick={() => {
-              if (mayClose()) close();
-            }}
+            onClick={close}
           >
             انصراف
           </Button>

@@ -704,7 +704,7 @@ export interface components {
             title: string;
             description?: string | null;
             /** @enum {string} */
-            category?: "personal" | "reading" | "work" | "university" | "other";
+            category?: "personal" | "reading" | "work" | "university" | "music" | "other";
             /** @enum {string} */
             priority?: "low" | "normal" | "high";
             estimateMinutes?: number | null;
@@ -715,7 +715,7 @@ export interface components {
             title: string;
             description?: string | null;
             /** @enum {string} */
-            category?: "personal" | "reading" | "work" | "university" | "other";
+            category?: "personal" | "reading" | "work" | "university" | "music" | "other";
             /** @enum {string} */
             priority?: "low" | "normal" | "high";
             estimateMinutes?: number | null;
@@ -726,7 +726,7 @@ export interface components {
             title?: string;
             description?: string | null;
             /** @enum {string} */
-            category?: "personal" | "reading" | "work" | "university" | "other";
+            category?: "personal" | "reading" | "work" | "university" | "music" | "other";
             /** @enum {string} */
             priority?: "low" | "normal" | "high";
             estimateMinutes?: number | null;
@@ -744,7 +744,7 @@ export interface components {
             title: string;
             description: string | null;
             /** @enum {string} */
-            category: "personal" | "reading" | "work" | "university" | "other";
+            category: "personal" | "reading" | "work" | "university" | "music" | "other";
             /** @enum {string} */
             priority: "low" | "normal" | "high";
             estimateMinutes: number | null;
@@ -1236,7 +1236,7 @@ export interface components {
             /** Format: date-time */
             endAt: string;
             /** @enum {string} */
-            category: "personal" | "reading" | "work" | "university" | "other";
+            category: "personal" | "reading" | "work" | "university" | "music" | "other";
             /** @enum {string|null} */
             status: "incomplete" | "completed" | null;
             version: number;
@@ -1729,7 +1729,7 @@ export interface operations {
                 limit?: number;
                 cursor?: string;
                 status?: "incomplete" | "completed";
-                category?: "personal" | "reading" | "work" | "university" | "other";
+                category?: "personal" | "reading" | "work" | "university" | "music" | "other";
                 priority?: "low" | "normal" | "high";
                 q?: string;
                 view?: "all" | "unscheduled" | "scheduled" | "overdue" | "completed";

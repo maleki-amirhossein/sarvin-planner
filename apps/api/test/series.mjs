@@ -28,7 +28,7 @@ await withApp(async ({ call, db }) => {
   const futureOverride = tasks.find(e => e.originalLocalDate === '2026-11-15');
   assert.equal((await edit('/task-occurrences/' + futureOverride.id, futureOverride.version, { scheduledStartAt: '2026-11-15T13:30:00Z', scheduledEndAt: '2026-11-15T14:30:00Z' })).status, 200);
   const seriesVersion = (await call('/task-series?taskId=' + task.id)).data.items[0].version;
-  const future = await edit('/task-series/' + series.data.id, seriesVersion, { scope: 'future', originalLocalDate: '2026-11-14', localStartTime: '15:00', template: { title: 'New future title', category: 'reading' } });
+  const future = await edit('/task-series/' + series.data.id, seriesVersion, { scope: 'future', originalLocalDate: '2026-11-14', localStartTime: '15:00', template: { title: 'New future title', category: 'music' } });
   assert.equal(future.status, 200); assert.equal(future.data.scope, 'future');
   events = await getSchedule();
   assert.equal(events.find(e => e.id === first.id).title, 'Reading fixture'); assert.equal(events.find(e => e.id === first.id).status, 'completed');
@@ -36,6 +36,8 @@ await withApp(async ({ call, db }) => {
   const changed = events.find(e => e.taskId === task.id && e.originalLocalDate === '2026-11-14');
   assert.equal(changed.occurrenceKey, `${series.data.rootSeriesId}:2026-11-14`); assert.equal(changed.startAt, '2026-11-14T11:30:00.000Z');
   assert.equal(changed.title, 'New future title'); assert.equal(changed.id, tasks.find(e => e.originalLocalDate === '2026-11-14').id);
+  assert.equal(changed.category, 'music');
+  assert.equal(events.find(e => e.id === first.id).category, 'reading');
   const deletePath = '/task-series/' + future.data.series.id;
   const blocked = await call(deletePath, { method: 'DELETE', version: future.data.series.version, key: randomUUID(), body: { scope: 'future', originalLocalDate: '2026-11-14' } });
   assert.equal(blocked.status, 409);

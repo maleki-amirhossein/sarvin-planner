@@ -178,6 +178,7 @@ export const categories = {
   reading: "مطالعه",
   work: "کار",
   university: "دانشگاه",
+  music: "موسیقی",
   other: "سایر",
 };
 export const priorities = { low: "کم", normal: "معمولی", high: "زیاد" };

@@ -199,6 +199,21 @@ UI deployment: [Actions run 42586421851](https://github.com/maleki-amirhossein/s
 **Done (source change):** set shared calendar day headers and time-grid lanes to solid white, including today, replacing the green today gradient. The date badge and event colors remain available for identification. CSS formatting and diff checks passed. Browser control remains deferred; no visual verification or deployment claimed. Original checklist remains 181/210.
 
 
+## Task cancel button — 2026-11-09
+
+**Done (source change):** the task form’s explicit Cancel button now closes and discards its draft immediately, without the native unsaved-changes confirmation. The pending-save disabled state remains. Other close paths retain their existing guard. Web typecheck, targeted ESLint and diff checks passed; browser verification remains deferred. Not yet pushed/deployed. Original checklist remains 181/210.
+
+
+## Music task category — 2026-11-09
+
+**Done (implementation/API acceptance):** added `music` (موسیقی) to the shared task category selector/filter/labels, PostgreSQL Category enum, Nest task-list validation, OpenAPI inputs/outputs and generated runtime schemas/DTOs. New additive migration `20261109084918_add_music_category` was generated against an isolated disposable database; applied migrations were not edited. HTTP acceptance verifies create/read/database persistence, category filtering, edits and occurrence snapshots, scheduled event category, and recurring future music categories while preserving past reading categories. API build, workspace typecheck, lint and contract synchronization passed. Task and series suites plus fresh/repeat migration and database-constraint checks passed on disposable databases. Existing fixed music classes were not reclassified; this adds a selectable task category. Browser verification remains deferred. Changes are local; migration has not been applied to the owner database or server. Original checklist remains 181/210.
+
+
+## Calendar hourly grid lines — 2026-11-09
+
+**Done (source change):** restored visibility of the shared calendar's horizontal time-slot borders by making day lanes transparent over a white calendar background. Opaque white day lanes had covered FullCalendar's underlying slot borders. White headers, day separators and event-card styling remain intact. CSS formatting and diff checks passed. Browser control remains deferred; no visual verification or deployment claimed. Original checklist remains 181/210.
+
+
 ## PWA installation follow-up — 2026-11-09
 
 **Done (source and local HTTP verification):** added a Persian RTL manifest with
@@ -301,3 +316,18 @@ desktop visual and interaction acceptance remains deferred by the user. Only the
 standalone decorative SVG was visually inspected. Concurrent category, task-cancel
 and calendar-grid edits were preserved and excluded. Original 181/210 unchanged;
 personal-UI follow-up 2/3 Done. Desktop mirror remains unavailable.
+
+
+## Local Docker UI refresh — 2026-11-09
+
+**Done (local runtime):** the public UI/PWA release had not replaced the separate
+local Docker web image; `/manifest.webmanifest` returned 404 at localhost:8080.
+Built `sarvin-planner-web:local` from committed snapshot `84385e4` in an isolated
+worktree and recreated only `web` using `--no-deps --no-build --wait`. Existing
+API/database/Caddy containers and data stayed intact; no migrations, provisioning
+or fixtures ran. Local general smoke, PWA HTTP smoke and seven-route personalized
+copy/style bundle checks passed; web/API/database health is green. Uncommitted
+category/task/calendar edits remain separate from this verified published snapshot.
+Docker production images do not hot-reload source; GitHub deployment updates only
+the remote server. Browser visual acceptance remains deferred; original 181/210
+checklist unchanged.

@@ -314,6 +314,7 @@ progress::-moz-progress-bar {
   box-shadow: none;
 }
 .calendar-grid {
+  background: #fff;
   --fc-monarch-primary: var(--primary);
   --fc-monarch-primary-foreground: #fff;
   --fc-monarch-tertiary: var(--primary);
@@ -337,9 +338,12 @@ progress::-moz-progress-bar {
   border-style: solid;
   border-color: #e9eae6;
 }
-.calendar-grid .sarvin-day-heading,
-.calendar-grid .sarvin-day-lane {
+.calendar-grid .sarvin-day-heading {
   background: #fff;
+}
+.calendar-grid .sarvin-day-lane {
+  /* Keep the time-slot borders beneath the day columns visible. */
+  background: transparent;
 }
 .calendar-day-button {
   display: flex;

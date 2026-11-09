@@ -836,6 +836,12 @@ Completed tasks below have actual verification evidence. The repository copy is 
 
 | 2026-11-09 | Login/calendar UI server release | **Done** | Published login icon/text adjustments and calendar card border removal in bbfb887. | Actions run 42586421851 passed; host deployed receipt, private pre-release backup, public HTTPS smoke, served JS/CSS, existing-session continuity and post-deployment eight-class readback passed. | docs/implementation/qa-report.md; handoff.md | Concurrent day-background edit not included; browser acceptance deferred. |
 
+| 2026-11-09 | Task Cancel button follow-up | **Done (source change)** | Explicit Cancel closes the task form without unsaved-changes confirmation; pending-save disabled state preserved. | Web typecheck, targeted ESLint and diff checks passed. | apps/web/src/components/task-form.tsx; qa-report.md; handoff.md | Not pushed/deployed; browser verification deferred; original 181/210 unchanged. |
+
+| 2026-11-09 | Music task category follow-up | **Done (implementation/API acceptance)** | Added music task category across UI, API/contracts and PostgreSQL via a new additive migration. | API build, types, lint, contract check and disposable task/series HTTP acceptance passed, including persistence/filtering/edit/schedule and recurring history. | apps/api/prisma/migrations/20261109084918_add_music_category; apps/api/test; qa-report.md; handoff.md | Local only; real databases untouched; browser acceptance deferred; 181/210 unchanged. |
+
+| 2026-11-09 | Calendar hourly grid lines | **Done (source change)** | Restored underlying time-slot borders with transparent day lanes over the white calendar background. | CSS formatting and diff checks passed; browser verification deferred. | apps/web/src/app/globals.css; qa-report.md; handoff.md | Not deployed; original 181/210 checklist unchanged; Desktop mirror remains unavailable. |
+
 ## 12. Handoff Status
 
 ```text
@@ -880,3 +886,5 @@ Final completion rule: A core feature is Done only when it works with real data 
 | 2026-11-09 | SP-PERSONAL-01 | **Done (source/build)** | Warm Sarvin-specific Persian copy; shared tar/setar decoration; paper/wood/green welcome/login/sidebar styling. | Web types/build/lint, 9 tests, formatting/diff; SVG inspected. | qa-report.md; handoff.md; sarvin-welcome.tsx; personalization.css | Browser acceptance deferred; concurrent changes excluded; original 181/210 unchanged. |
 
 | 2026-11-09 | SP-PERSONAL-02 | **Done (public release)** | Personalized UI deployed at existing HTTPS IP, commit `4aae047`, Actions `42593323279`. | CI and public copy/style/PWA/API smoke; service health and session continuity passed. | qa-report.md; handoff.md; Actions run 42593323279 | Browser visual acceptance SP-PERSONAL-03 remains open; unrelated changes excluded. |
+
+| 2026-11-09 | Local UI/PWA runtime refresh | **Done** | Rebuilt committed `84385e4` web image and recreated only local web. | localhost:8080 general/PWA/personal UI HTTP checks passed; services healthy. | qa-report.md; handoff.md | Data/API untouched; uncommitted changes excluded; browser acceptance deferred. |
