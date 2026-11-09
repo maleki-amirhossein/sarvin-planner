@@ -177,3 +177,11 @@ before the next import while the current image remains the rollback target. Real
 production failure injection was intentionally not performed; recovery branches
 are covered with isolated mocked runtime tests. Browser/reboot/off-server-backup
 acceptance remains deferred; the checklist remains 181/210.
+
+## Login UI adjustment — 2026-11-09
+
+Moved the password visibility button to logical `start` (right in the RTL form), matching the LTR input's existing right-side `pe-12` padding. Removed the account-provisioning sentence below the submit button. Web typecheck, targeted ESLint and diff checks passed. Browser control remains deferred; no visual verification or deployment is claimed.
+
+## Calendar card border adjustment — 2026-11-09
+
+Removed the shared calendar event's 4px inline-start accent border (right side in RTL), retaining `border: 0`. CSS formatting and diff checks passed. Browser verification remains deferred; changes are local, not deployed.

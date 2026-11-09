@@ -372,7 +372,6 @@ progress::-moz-progress-bar {
 }
 .calendar-grid .sarvin-calendar-event {
   border: 0;
-  border-inline-start: 4px solid var(--fc-event-contrast-color);
   border-radius: 9px;
   background:
     linear-gradient(135deg, #ffffff40, transparent), var(--fc-event-color);

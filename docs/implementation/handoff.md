@@ -109,3 +109,11 @@ the hosted-runner SSH timeout. The root-owned hook rejects PR/other-branch jobs,
 and all external PR workflows require approval. Keep the runner binary maintained
 as described in the CI/CD runbook; auto-update is disabled for its protected host
 installation. No additional account provisioning is necessary.
+
+## Login UI adjustment — 2026-11-09
+
+**Done (source change):** password visibility icon moved to the right; explanatory sentence below the login button removed. Web typecheck and targeted ESLint passed. Changes are local and not deployed; browser verification remains deferred. Original checklist count remains 181/210.
+
+## Calendar card border adjustment — 2026-11-09
+
+**Done (source change):** removed the right-side accent border from shared calendar event cards. CSS formatting and diff checks passed. Changes remain local; browser verification and deployment are not claimed. Original checklist count remains 181/210.

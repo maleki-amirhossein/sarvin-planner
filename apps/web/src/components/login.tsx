@@ -99,7 +99,7 @@ export function Login({ expired = false }: { expired?: boolean }) {
                 size="icon"
                 aria-label={visible ? "پنهان کردن رمز" : "نمایش رمز"}
                 onClick={() => setVisible(!visible)}
-                className="absolute end-0 top-0"
+                className="absolute start-0 top-0"
               >
                 {visible ? <EyeOff size={18} /> : <Eye size={18} />}
               </Button>
@@ -115,9 +115,6 @@ export function Login({ expired = false }: { expired?: boolean }) {
             <ArrowLeft size={18} />
           </Button>
         </form>
-        <p className="mt-5 text-center text-xs leading-6 text-muted-foreground">
-          حساب شخصی شما از پیش ساخته می‌شود. ثبت‌نام عمومی وجود ندارد.
-        </p>
       </main>
     </div>
   );

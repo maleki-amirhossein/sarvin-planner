@@ -826,6 +826,10 @@ Completed tasks below have actual verification evidence. The repository copy is 
 
 | 2026-11-09 | CI/CD follow-up | **Done** | Main/master pushes verify/build on GitHub and deploy via a guarded non-root echoa runner, loopback restricted SSH, private backup and migration-aware recovery. | [Run 42582507446](https://github.com/maleki-amirhossein/sarvin-planner/actions/runs/42582507446) passed; public HTTPS, existing session, unchanged task data and daily backup verified. Twelve local boundary/recovery tests cover final retry hardening. | .github/workflows/ci-cd.yml; scripts/ci; ci-cd.md; qa-report.md | Original 181/210 checklist unchanged; browser/reboot/off-server acceptance remains open. |
 
+| 2026-11-09 | Login UI follow-up | **Done (source change)** | Moved password visibility icon to the right in the RTL form and removed the sentence below the submit button. | Web typecheck, targeted ESLint and diff checks passed; browser control remains deferred. | apps/web/src/components/login.tsx; qa-report.md; handoff.md | Not deployed; original 181/210 checklist unchanged. |
+
+| 2026-11-09 | Calendar card border follow-up | **Done (source change)** | Removed the right-side accent border from shared calendar event cards. | CSS formatting and diff checks passed; browser verification deferred. | apps/web/src/app/globals.css; qa-report.md; handoff.md | Not deployed; original 181/210 checklist unchanged. |
+
 ## 12. Handoff Status
 
 ```text
