@@ -105,7 +105,7 @@ class DeploymentBoundaryTests(unittest.TestCase):
                 archive.addfile(member, io.BytesIO(sql))
             self.assertEqual(migrations(source), {'20261108000000_init': hashlib.sha256(sql).hexdigest()})
 
-    def exercise_failed_rollout(self, pending, fail_migration=False):
+    def exercise_failed_rollout(self, pending, fail_migration=False, deployment_attempt='1'):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary).resolve()
             previous = root / 'releases/previous'
@@ -115,12 +115,12 @@ class DeploymentBoundaryTests(unittest.TestCase):
             (root / 'current').symlink_to(previous)
             staging = root / 'incoming'
             staging.mkdir()
-            sha, number, attempt = 'a' * 40, '10', '1'
+            sha, number, attempt = 'a' * 40, '10', deployment_attempt
             release = root / 'releases' / f'ci-{sha}-{number}-{attempt}'
-            metadata = dict(sha=sha, run=number, attempt=attempt, branch='main')
+            metadata = dict(sha=sha, run=number, attempt='1', branch='main')
             (staging / 'release.json').write_text(json.dumps(metadata))
             (staging / 'source.tar.gz').write_bytes(b'source fixture')
-            tags = [f'sarvin-planner-{service}:{release.name}' for service in ('api', 'web')]
+            tags = [f'sarvin-planner-{service}:ci-{sha}-{number}-1' for service in ('api', 'web')]
             with tarfile.open(staging / 'images.tar.gz', 'w:gz') as archive:
                 data = json.dumps([{'RepoTags': tags}]).encode()
                 member = tarfile.TarInfo('manifest.json')
@@ -152,6 +152,7 @@ class DeploymentBoundaryTests(unittest.TestCase):
                     patch.object(deployment, 'run', side_effect=command), \
                     patch.object(deployment, 'compose', side_effect=compose), \
                     patch.object(deployment, 'migrations', return_value=candidate), \
+                    patch.object(deployment, 'prune_images'), \
                     patch.object(deployment, 'smoke'), \
                     patch.object(deployment.shutil, 'disk_usage', return_value=SimpleNamespace(free=10 * 1024**3)):
                 with self.assertRaises(RuntimeError):
@@ -175,6 +176,21 @@ class DeploymentBoundaryTests(unittest.TestCase):
 
     def test_failed_migration_never_restarts_old_code(self):
         self.exercise_failed_rollout(True, fail_migration=True)
+
+    def test_deploy_retry_accepts_original_verified_build_attempt(self):
+        self.exercise_failed_rollout(False, deployment_attempt='2')
+
+    def test_superseded_run_fails_without_claiming_deployment(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'shared').mkdir()
+            state = root / 'shared/ci-state.json'
+            state.write_text(json.dumps({'sequence': [11, 1], 'status': 'deployed'}))
+            with patch.multiple(deployment, ROOT=root, STATE=state), patch.object(deployment, 'run') as command:
+                with self.assertRaisesRegex(ValueError, 'superseded'):
+                    deployment.deploy(root, 'a' * 40, '10', '2')
+                deployment.deploy(root, 'a' * 40, '11', '1')
+                command.assert_not_called()
 
 
 if __name__ == '__main__':

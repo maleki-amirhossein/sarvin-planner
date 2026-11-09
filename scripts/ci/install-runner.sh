@@ -19,11 +19,11 @@ fi
 cd "$runner"
 if [[ ! -f .runner ]]; then
   chown -R sarvin-ci:sarvin-ci "$runner"
-  export RUNNER_INPUT_TOKEN="$registration_token"
+  export ACTIONS_RUNNER_INPUT_TOKEN="$registration_token"
   runuser -u sarvin-ci -- ./config.sh --unattended \
     --url https://github.com/maleki-amirhossein/sarvin-planner \
     --name echoa-sarvin-deploy --labels sarvin-deploy --work _work --disableupdate
-  unset RUNNER_INPUT_TOKEN
+  unset ACTIONS_RUNNER_INPUT_TOKEN
 fi
 unset registration_token
 install -m 755 "$script_dir/runner-guard.sh" /usr/local/lib/sarvin-runner-guard.sh
@@ -47,7 +47,9 @@ UNIT
 # Deliberately disable self-update; administrator upgrades must preserve this.
 chown -R root:sarvin-ci "$runner"
 chmod 750 "$runner"
-chmod 640 .env .credentials .credentials_rsaparams .runner
+for private_file in .env .credentials .credentials_rsaparams .runner .path .service; do
+  if [[ -f $private_file ]]; then chmod 640 "$private_file"; fi
+done
 mkdir -p _work _diag
 chown -R sarvin-ci:sarvin-ci _work _diag
 systemctl daemon-reload

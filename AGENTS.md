@@ -159,5 +159,13 @@ current release's `images.env`. Application releases do not execute repository
 shell scripts as root. Gateway changes require administrator review/installation.
 No-migration failures can roll back images; attempted schema changes require forward
 repair and must never trigger automatic data restore. Preserve current/previous
-images, all backups and unrelated Echoa services. Ten deployment boundary/recovery
+images, all backups and unrelated Echoa services. Twelve deployment boundary/recovery
 tests passed; actual workflow verification is recorded in QA and handoff.
+
+Deployment uses the dedicated non-root echoa runner because GitHub-hosted SSH
+connections timed out. Only its deploy job may use the server runner: preserve
+the host-owned pre-job guard and all-external-contributor approval setting.
+GitHub build/tests stay hosted. The dedicated SSH key accepts loopback only.
+First complete Actions deployment 42582507446, public smoke and owner-session
+continuity passed. Runner maintenance and artifact retry behavior are documented
+in the CI/CD runbook; production failure injection was not performed.

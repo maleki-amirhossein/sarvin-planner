@@ -189,25 +189,32 @@ def deploy(directory, sha, number, attempt):
         state = json.loads(STATE.read_text()) if STATE.exists() else {}
         sequence = (int(number), int(attempt))
         previous_sequence = tuple(state.get('sequence', [0, 0]))
-        if sequence < previous_sequence or (sequence == previous_sequence and state.get('status') == 'deployed'):
-            print('Skipped superseded/already deployed run', flush=True)
+        require(sequence >= previous_sequence, 'Run superseded by a newer deployment')
+        if sequence == previous_sequence and state.get('status') == 'deployed':
+            print('This run is already deployed', flush=True)
             return
         require(sequence != previous_sequence, 'Failed attempt cannot be reused; rerun the GitHub job')
         previous = (ROOT / 'current').resolve(strict=True)
         release_id = f'ci-{sha}-{number}-{attempt}'
         release = ROOT / 'releases' / release_id
         require(not release.exists(), 'Release already exists')
-        require(shutil.disk_usage(ROOT).free > 1536 * 1024**2, 'Less than 1.5 GiB free; administrator cleanup required')
         metadata = json.loads((directory / 'release.json').read_text())
-        require((metadata['sha'], metadata['run'], metadata['attempt']) == (sha, number, attempt), 'Release identity mismatch')
+        require((metadata['sha'], metadata['run']) == (sha, number), 'Release identity mismatch')
+        build_attempt = metadata['attempt']
+        require(re.fullmatch(r'[1-9][0-9]{0,5}', build_attempt) is not None and int(build_attempt) <= int(attempt), 'Invalid build attempt')
         require(metadata['branch'] in ('main', 'master'), 'Only main/master may deploy')
         candidate = migrations(directory / 'source.tar.gz')
         # Validate archive tags before docker load can alter local image references.
         with tarfile.open(directory / 'images.tar.gz', 'r:gz') as archive:
             manifest = json.load(archive.extractfile('manifest.json'))
             tags = [tag for item in manifest for tag in item.get('RepoTags', [])]
-        expected_tags = [f'sarvin-planner-{service}:{release_id}' for service in ('api', 'web')]
+        image_release = f'ci-{sha}-{number}-{build_attempt}'
+        expected_tags = [f'sarvin-planner-{service}:{image_release}' for service in ('api', 'web')]
         require(sorted(tags) == sorted(expected_tags), 'Unexpected image tags')
+        # During rollout, current is the rollback target; make room by discarding
+        # older Sarvin-only images before importing the next candidate.
+        prune_images([previous])
+        require(shutil.disk_usage(ROOT).free > 1536 * 1024**2, 'Less than 1.5 GiB free; administrator cleanup required')
         run(['docker', 'load', '-i', str(directory / 'images.tar.gz')])
         (directory / 'images.tar.gz').unlink()
         for tag in expected_tags:
@@ -233,7 +240,8 @@ def deploy(directory, sha, number, attempt):
         shutil.copyfile(directory / 'release.json', release / 'release.json')
         (release / 'images.env').write_text(f'API_IMAGE={expected_tags[0]}\nWEB_IMAGE={expected_tags[1]}\n')
         state = {'sequence': list(sequence), 'sha': sha, 'status': 'deploying',
-                 'release': str(release), 'previous': str(previous), 'branch': metadata['branch']}
+                 'release': str(release), 'previous': str(previous), 'branch': metadata['branch'],
+                 'build_attempt': int(build_attempt)}
         save_json(STATE, state)
         stopped = False
         migration_attempted = False

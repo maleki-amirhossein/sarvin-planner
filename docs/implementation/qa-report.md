@@ -148,7 +148,7 @@ Repository lint, shell syntax and workflow lint passed (installed actionlint doe
 not yet recognize GitHub's documented `concurrency.queue`, so that diagnostic was
 excluded). Production environment restricts deployments to main/master. The actual
 restricted key rejected `whoami`; fixed Compose validated and scheduled backup
-service reran successfully. First GitHub deployment verification is pending below.
+service reran successfully. The successful GitHub deployment verification is recorded below.
 No browser control, owner reset, production fixtures or unrelated service changes.
 
 The first workflow run 42580722367 passed hosted verification/build but could not
@@ -156,3 +156,24 @@ reach echoa:22 (timeout; no deployment started). The deployment job now uses a
 dedicated non-root outbound runner and loopback restricted SSH. Ten local tests
 include streaming package integrity and rejection of untrusted runner contexts.
 External PR workflow approval is required for all outside contributors.
+
+### Verified automatic production deployment
+
+[Run 42582507446](https://github.com/maleki-amirhossein/sarvin-planner/actions/runs/42582507446) completed successfully on push to main (`9b9439c`):
+all hosted application checks and ten deployment tests passed, amd64 images were
+built, and the guarded echoa runner downloaded and deployed the bundle. Actual
+pre-job context guard, host pin, loopback forced SSH command, source/image migration
+checksum match, private pre-release backup, atomic release selection and HTTPS
+smoke all passed. API/web were replaced; database/Caddy and all four Echoa container
+IDs remained unchanged. The owner session created before deployment survived it;
+private task response was unchanged and logout succeeded. External client smoke
+also passed. Daily backup ran successfully with the new release layout; pre-release
+dump permissions are 600. No new migrations or production fixtures were introduced.
+
+Follow-up recovery hardening adds stable artifact names and accepts the original
+verified build on a deployment-only rerun. Twelve local tests pass, including that
+retry, failed migration and unhealthy rollout cases. Older Sarvin images are pruned
+before the next import while the current image remains the rollback target. Real
+production failure injection was intentionally not performed; recovery branches
+are covered with isolated mocked runtime tests. Browser/reboot/off-server-backup
+acceptance remains deferred; the checklist remains 181/210.

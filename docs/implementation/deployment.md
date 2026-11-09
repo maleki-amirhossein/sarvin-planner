@@ -1,3 +1,9 @@
+> Current echoa application releases use [automatic CI/CD](ci-cd.md).
+> `/opt/sarvin-planner/manage` reads host-owned Compose files from `shared/runtime`
+> and image tags from `current/images.env`. Current CI receipt: `shared/ci-state.json`.
+> The original private/public setup below records bootstrap history and alternative
+> deployments; do not replace current runtime config with an old release archive.
+
 # Personal-server deployment
 
 Current access is **https://87.107.160.160:8443** on `echoa`. At the user’s request on 2026-11-09, the initial private deployment was promoted to public HTTPS without purchasing/configuring a domain. The existing valid IP certificate is terminated by a dedicated host Nginx listener. The same server database, account and password are preserved. Scheduled off-server backup/retention and remaining acceptance checks are still pending; see the QA report. Never point the server at the local owner database or seed production fixtures.

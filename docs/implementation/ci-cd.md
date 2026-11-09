@@ -21,7 +21,8 @@ branches target the same application/database: the later successful run wins.
    stop API writes before the backup and apply committed migrations once.
 7. Atomically select the release, replace only API/web, wait for container health,
    then verify public TLS, database readiness, Persian login, logo and private-route protection.
-8. Retain current/previous images. Remove only obsolete Sarvin CI images and the
+8. Retain current/previous images after success. At the next rollout, keep the
+   current image as the rollback target and prune older Sarvin images before import. Remove only obsolete Sarvin CI images and the
    recorded original Sarvin baseline, never unrelated images/volumes or backups.
 
 Workflows queue instead of interrupting running migrations. The host additionally
@@ -36,7 +37,7 @@ The worker runs as a transient systemd service so losing SSH does not kill a mig
 Production environment secret: `DEPLOY_SSH_KEY`. Variables: `DEPLOY_HOST` (127.0.0.1) and
 `DEPLOY_KNOWN_HOSTS`. `HostKeyAlias` pins the actual public host identity for the loopback connection. The host key was obtained through the existing authenticated
 administrator SSH connection, not trusted from an unauthenticated key scan.
-The dedicated deploy public key has `restrict,command="/usr/local/lib/sarvin/deploy.py"`
+The dedicated deploy public key has `from="127.0.0.1,::1",restrict,command="/usr/local/lib/sarvin/deploy.py"`
 in root's authorized_keys: shell commands, PTY, forwarding and agent forwarding
 are unavailable. This key is an application-deployment credential: pushed application
 code necessarily has access to its own database/session environment inside the API.
@@ -87,7 +88,9 @@ the previous release path from the receipt, atomically replace `current`, then r
 `/opt/sarvin-planner/manage up -d --no-deps --no-build --pull never --wait api web`
 and public smoke checks. Do not run `migrate dev`, reset/seed production, or restore
 a dump over live data as routine recovery. Rerun the failed Actions job to produce
-a new attempt number; a previously attempted number is not reusable.
+a new deployment attempt number while reusing its verified build artifact. If the
+three-day artifact retention has expired, rerun the entire workflow to rebuild it.
+A previously attempted deployment number is not reusable.
 
 No new owner is created during deployment. Daily backup and certificate-renewal
 timers continue independently. Automatic off-server backup retention/alerts remain
@@ -96,7 +99,7 @@ release images/artifacts and the backup policy instead of pruning other projects
 
 ## Verification record
 
-Ten local deployment boundary/recovery tests cover command injection, traversal,
+Twelve local deployment boundary/recovery tests cover command injection, traversal,
 symlinks, duplicate entries, bundle integrity, applied-migration changes, safe
 image rollback and migration-failure forward repair. Restricted SSH rejected a
 real arbitrary-shell request. The fixed runtime configuration validated and the
@@ -129,3 +132,8 @@ Application deployments themselves remain automatic and require no approval.
 The first hosted-runner attempt passed all verification/build steps but timed out
 connecting to echoa:22 before any release or database change. The outbound runner
 path replaces that network dependency; see the QA record for the successful run.
+
+First successful production run: [42582507446](https://github.com/maleki-amirhossein/sarvin-planner/actions/runs/42582507446), commit `9b9439c`.
+The existing owner session survived replacement of API/web, private task data was
+unchanged, and logout/public HTTPS smoke passed from the client machine.
+Runner update requirements follow [GitHub’s runner reference](https://docs.github.com/en/actions/reference/runners/self-hosted-runners#runner-software-updates-on-self-hosted-runners).

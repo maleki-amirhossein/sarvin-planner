@@ -57,9 +57,13 @@ key = Path(sys.argv[1]).read_text().strip()
 assert key.startswith('ssh-ed25519 ') and '\n' not in key
 p = Path('/root/.ssh/authorized_keys')
 current = p.read_text()
-if key.split()[1] not in current:
-    with p.open('a') as output:
-        output.write('\nrestrict,command="/usr/local/lib/sarvin/deploy.py" ' + key + '\n')
+entry = 'from="127.0.0.1,::1",restrict,command="/usr/local/lib/sarvin/deploy.py" ' + key
+lines = current.splitlines()
+if key.split()[1] in current:
+    lines = [entry if key.split()[1] in line.split() else line for line in lines]
+else:
+    lines.append(entry)
+p.write_text('\n'.join(lines) + '\n')
 p.chmod(0o600)
 PY
 "$root/manage" config --quiet

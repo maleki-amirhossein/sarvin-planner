@@ -99,5 +99,13 @@ The private instance above was promoted, preserving the existing owner/password 
 Automatic main/master deployment is configured; details and recovery instructions
 are in [CI/CD operations](ci-cd.md). Host gateway, dedicated restricted SSH key and
 GitHub production environment are installed. Local boundary/recovery checks and
-the existing backup service passed; the first GitHub pipeline result is recorded
-below when verified. The canonical 181/210 checklist is unchanged.
+the existing backup service passed. [Production run 42582507446](https://github.com/maleki-amirhossein/sarvin-planner/actions/runs/42582507446)
+completed successfully; public HTTPS, owner session continuity and unchanged task
+data were verified afterward. The canonical 181/210 checklist is unchanged.
+
+The deploy job runs on dedicated non-root `echoa-sarvin-deploy`; only verification
+and builds use hosted runners. The server initiates its GitHub connection to avoid
+the hosted-runner SSH timeout. The root-owned hook rejects PR/other-branch jobs,
+and all external PR workflows require approval. Keep the runner binary maintained
+as described in the CI/CD runbook; auto-update is disabled for its protected host
+installation. No additional account provisioning is necessary.
