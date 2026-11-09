@@ -1,0 +1,10 @@
+node_modules
+**/node_modules
+**/.next
+**/dist
+**/src/generated
+.local
+apps/api/src/http/contract-schemas.json
+apps/web/src/lib/api-routes.ts
+docs/contracts/api.d.ts
+pnpm-lock.yaml

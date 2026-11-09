@@ -1,0 +1,39 @@
+{
+  "name": "sarvin-planner",
+  "private": true,
+  "packageManager": "pnpm@10.34.9",
+  "engines": {
+    "node": ">=24.0.0 <25",
+    "pnpm": ">=10 <11"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter \"./apps/*\" dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r --if-present test",
+    "db:generate": "pnpm --filter @sarvin/api db:generate",
+    "db:migrate": "pnpm --filter @sarvin/api db:migrate",
+    "db:deploy": "pnpm --filter @sarvin/api db:deploy",
+    "db:status": "pnpm --filter @sarvin/api db:status",
+    "db:up": "docker compose up -d db",
+    "db:down": "docker compose stop db",
+    "smoke": "node scripts/smoke.mjs",
+    "lint": "eslint . --max-warnings 0",
+    "contracts:generate": "node scripts/check-contracts.mjs --write",
+    "contracts:check": "node scripts/check-contracts.mjs",
+    "test:database": "pnpm --filter @sarvin/api test:database",
+    "owner": "pnpm --filter @sarvin/api owner",
+    "test:auth": "pnpm --filter @sarvin/api build && pnpm --filter @sarvin/api test:auth",
+    "test:domain": "pnpm --filter @sarvin/api build && pnpm --filter @sarvin/api test:domain"
+  },
+  "devDependencies": {
+    "@apidevtools/swagger-parser": "13.1.0",
+    "@eslint/js": "9.39.5",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.5",
+    "openapi-typescript": "7.13.0",
+    "prettier": "3.6.2",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.1"
+  }
+}

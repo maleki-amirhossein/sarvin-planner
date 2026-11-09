@@ -1,0 +1,164 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@fontsource-variable/vazirmatn";
+
+:root {
+  --background: #faf9f7;
+  --foreground: #182a32;
+  --card: #ffffff;
+  --card-foreground: var(--foreground);
+  --primary: #00796e;
+  --primary-foreground: #ffffff;
+  --secondary: #e4f3f0;
+  --secondary-foreground: #00594f;
+  --muted: #f1f3f2;
+  --muted-foreground: #5a6870;
+  --accent: #e4f3f0;
+  --accent-foreground: #00594f;
+  --destructive: #b42318;
+  --destructive-foreground: #ffffff;
+  --border: #dbe1df;
+  --input: #c5cfcb;
+  --ring: #008d80;
+  --popover: #ffffff;
+  --popover-foreground: var(--foreground);
+  --reading: #f0e8ff;
+  --reading-foreground: #553680;
+  --personal: #fff0da;
+  --personal-foreground: #795013;
+  --work: #dff3f0;
+  --work-foreground: #00594f;
+  --university: #e4efff;
+  --university-foreground: #234d83;
+  --radius: 0.875rem;
+  --control-height: 2.75rem;
+  --space-page: clamp(1rem, 2vw, 2rem);
+  --shadow-card: 0 2px 8px rgb(24 42 50 / 0.03);
+}
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-reading: var(--reading);
+  --color-reading-foreground: var(--reading-foreground);
+  --color-personal: var(--personal);
+  --color-personal-foreground: var(--personal-foreground);
+  --color-work: var(--work);
+  --color-work-foreground: var(--work-foreground);
+  --color-university: var(--university);
+  --color-university-foreground: var(--university-foreground);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: "Vazirmatn Variable", Tahoma, Arial, sans-serif;
+}
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply m-0 bg-background font-sans text-foreground antialiased;
+  }
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring;
+  }
+  button:not(:disabled),
+  a {
+    cursor: pointer;
+  }
+  button:disabled {
+    @apply cursor-not-allowed opacity-50;
+  }
+  input,
+  select,
+  textarea {
+    @apply w-full rounded-lg border border-input bg-card px-3 py-2;
+    min-height: var(--control-height);
+  }
+  input[type="checkbox"] {
+    width: 1.25rem;
+    min-height: 1.25rem;
+    accent-color: var(--primary);
+  }
+  [aria-invalid="true"] {
+    border-color: var(--destructive);
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-bold;
+  }
+}
+@layer components {
+  .surface {
+    @apply rounded-xl border bg-card;
+    box-shadow: var(--shadow-card);
+  }
+  .field {
+    @apply flex flex-col gap-1.5 text-sm;
+  }
+  .error-text {
+    @apply text-sm text-destructive;
+  }
+  .loading-skeleton {
+    @apply animate-pulse rounded-lg bg-muted;
+  }
+  .ltr-input {
+    direction: ltr;
+    text-align: left;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Native progress styling is inconsistent across WebKit/Chromium. */
+progress {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--muted);
+}
+progress::-webkit-progress-bar {
+  background: var(--muted);
+  border-radius: 999px;
+}
+progress::-webkit-progress-value {
+  background: var(--primary);
+  border-radius: 999px;
+}
+progress::-moz-progress-bar {
+  background: var(--primary);
+  border-radius: 999px;
+}

@@ -1,0 +1,24 @@
+# docker compose --env-file .env.production -f compose.yaml -f compose.production.yaml ...
+# Requires Docker Compose 2.24.4+ for !reset.
+services:
+  db:
+    ports: !reset []
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set a unique production database password}
+  api:
+    environment:
+      COOKIE_SECURE: "true"
+      ALLOW_INSECURE_LOCAL_HTTP: "false"
+      APP_ORIGINS: ${APP_ORIGINS:?Set the exact HTTPS origin}
+      SESSION_SECRET: ${SESSION_SECRET:?Set a random production session secret}
+  caddy:
+    environment:
+      CADDY_SITE_ADDRESS: ${CADDY_SITE_ADDRESS:?Set the real domain}
+    ports: !override
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+
+networks:
+  database:
+    internal: true

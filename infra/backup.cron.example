@@ -1,0 +1,5 @@
+# Run as the deployment operator after configuring the real off-server repository.
+# Environment file must be mode 600; contains COMPOSE_FILE, COMPOSE_ENV_FILES,
+# BACKUP_DIR, RESTIC_REPOSITORY, RESTIC_PASSWORD_FILE and provider credentials if needed.
+# This is an example, not an installed cron job. Send failures to your monitoring channel.
+15 3 * * * cd /opt/sarvin-planner && /bin/bash -c 'set -a; source /etc/sarvin/backup.env; set +a; ./scripts/ops/backup.sh' >> /var/log/sarvin-backup.log 2>&1

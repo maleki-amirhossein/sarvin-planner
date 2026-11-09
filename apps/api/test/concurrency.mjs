@@ -1,0 +1,26 @@
+import assert from 'node:assert/strict';
+import { randomUUID } from 'node:crypto';
+import { withApp } from './harness.mjs';
+await withApp(async ({ call, db }) => {
+  const key = randomUUID(), body = { title: 'Concurrent fixture' };
+  const creates = await Promise.all([1,2].map(() => call('/tasks', { method: 'POST', key, body })));
+  assert.equal(creates[0].status, 201); assert.equal(creates[1].status, 201); assert.equal(creates[0].data.id, creates[1].data.id);
+  assert.equal((await db.query('SELECT count(*)::int AS n FROM "Task"')).rows[0].n, 1);
+  const a = creates[0].data;
+  const b = (await call('/tasks', { method: 'POST', key: randomUUID(), body: { title: 'Competing fixture' } })).data;
+  const proposal = { scheduledStartAt: '2026-11-07T11:30:00Z', scheduledEndAt: '2026-11-07T12:30:00Z' };
+  const competing = await Promise.all([a,b].map(task => call('/task-occurrences/' + task.oneOffOccurrenceId, { method: 'PATCH', version: 1, body: proposal })));
+  assert.deepEqual(competing.map(result => result.status).sort(), [200,409]);
+  const deniedIndex = competing.findIndex(result => result.status === 409);
+  const deniedTask = [a,b][deniedIndex], denied = competing[deniedIndex];
+  assert.equal(denied.data.code, 'SCHEDULE_CONFLICT');
+  const c = (await call('/tasks', { method: 'POST', key: randomUUID(), body: { title: 'New schedule revision fixture' } })).data;
+  await call('/task-occurrences/' + c.oneOffOccurrenceId, { method: 'PATCH', version: 1, body: { scheduledStartAt: '2026-11-07T13:30:00Z', scheduledEndAt: '2026-11-07T14:30:00Z' } });
+  const staleConfirmation = await call('/task-occurrences/' + deniedTask.oneOffOccurrenceId, { method: 'PATCH', version: 1, body: { ...proposal, conflictSnapshot: denied.data.details.conflictSnapshot } });
+  assert.equal(staleConfirmation.status, 409); assert.notEqual(staleConfirmation.data.details.conflictSnapshot, denied.data.details.conflictSnapshot);
+  assert.equal((await call('/task-occurrences/' + deniedTask.oneOffOccurrenceId, { method: 'PATCH', version: 1, body: { ...proposal, conflictSnapshot: staleConfirmation.data.details.conflictSnapshot } })).status, 200);
+  const competingEdits = await Promise.all(['First title','Second title'].map(title => call('/tasks/' + a.id, { method: 'PATCH', version: 1, body: { title } })));
+  assert.deepEqual(competingEdits.map(result => result.status).sort(), [200,409]);
+  assert.equal(competingEdits.find(result => result.status === 409).data.code, 'STALE_VERSION');
+  console.log('PASS: concurrent create replay, owner-serialized overlap checks, fresh confirmation after revision changes, and stale concurrent updates.');
+});

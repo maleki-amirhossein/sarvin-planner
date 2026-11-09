@@ -1,0 +1,319 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Category {
+  personal
+  reading
+  work
+  university
+  other
+}
+
+enum Priority {
+  low
+  normal
+  high
+}
+
+enum Completion {
+  incomplete
+  completed
+}
+
+enum FixedKind {
+  work
+  class
+}
+
+enum ExceptionKind {
+  cancel
+  override
+}
+
+enum GoalUnit {
+  minutes
+  pages
+  sessions
+}
+
+enum BookStatus {
+  reading
+  finished
+  archived
+}
+
+model Owner {
+  id                String              @id @default(uuid()) @db.Uuid
+  singleton         Boolean             @unique @default(true)
+  email             String              @unique @db.VarChar(254)
+  passwordHash      String
+  sessionGeneration Int                 @default(0)
+  scheduleRevision  Int                 @default(0)
+  createdAt         DateTime            @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime            @updatedAt @db.Timestamptz(3)
+  settings          UserSettings?
+  tasks             Task[]
+  roots             SeriesRoot[]
+  books             Book[]
+  readingSessions   ReadingSession[]
+  goals             WeeklyGoal[]
+  defaults          DefaultGoal[]
+  priorities        DailyPriority[]
+  idempotency       IdempotencyRecord[]
+}
+
+// Compatible with express-session/connect-pg-simple. Never exported.
+model AuthSession {
+  sid    String   @id @db.VarChar
+  sess   Json     @db.Json
+  expire DateTime @db.Timestamptz(3)
+
+  @@index([expire])
+  @@map("session")
+}
+
+model UserSettings {
+  ownerId           String    @id @db.Uuid
+  owner             Owner     @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  timezone          String    @default("Asia/Tehran")
+  weekStartsOn      Int       @default(6)
+  workEffectiveFrom DateTime? @db.Date
+  version           Int       @default(1)
+  prioritiesVersion Int       @default(1)
+  updatedAt         DateTime  @updatedAt @db.Timestamptz(3)
+}
+
+model Task {
+  id              String           @id @default(uuid()) @db.Uuid
+  ownerId         String           @db.Uuid
+  owner           Owner            @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  title           String           @db.VarChar(200)
+  description     String?          @db.VarChar(5000)
+  category        Category         @default(personal)
+  priority        Priority         @default(normal)
+  estimateMinutes Int?
+  dueDate         DateTime?        @db.Date
+  version         Int              @default(1)
+  deletedAt       DateTime?        @db.Timestamptz(3)
+  createdAt       DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime         @updatedAt @db.Timestamptz(3)
+  occurrences     TaskOccurrence[]
+  series          TaskSeries[]
+
+  @@index([ownerId, createdAt, id])
+  @@index([ownerId, dueDate])
+}
+
+model SeriesRoot {
+  id            String                @id @default(uuid()) @db.Uuid
+  ownerId       String                @db.Uuid
+  owner         Owner                 @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  bootstrapKey  String?
+  createdAt     DateTime              @default(now()) @db.Timestamptz(3)
+  fixedSegments FixedSeries[]
+  taskSegments  TaskSeries[]
+  exceptions    OccurrenceException[]
+
+  @@unique([ownerId, bootstrapKey])
+}
+
+model TaskSeries {
+  id              String           @id @default(uuid()) @db.Uuid
+  rootSeriesId    String           @db.Uuid
+  root            SeriesRoot       @relation(fields: [rootSeriesId], references: [id], onDelete: Restrict)
+  taskId          String           @db.Uuid
+  task            Task             @relation(fields: [taskId], references: [id], onDelete: Restrict)
+  template        Json
+  weekdays        Int[]
+  localStartTime  String           @db.VarChar(5)
+  durationMinutes Int
+  timezone        String           @default("Asia/Tehran")
+  effectiveFrom   DateTime         @db.Date
+  effectiveUntil  DateTime?        @db.Date
+  version         Int              @default(1)
+  deletedAt       DateTime?        @db.Timestamptz(3)
+  occurrences     TaskOccurrence[]
+  createdAt       DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime         @updatedAt @db.Timestamptz(3)
+  terminatedAt    DateTime?        @db.Date
+
+  @@unique([rootSeriesId, effectiveFrom])
+  @@index([taskId, effectiveFrom])
+}
+
+model TaskOccurrence {
+  id                String           @id @default(uuid()) @db.Uuid
+  taskId            String           @db.Uuid
+  task              Task             @relation(fields: [taskId], references: [id], onDelete: Restrict)
+  seriesId          String?          @db.Uuid
+  series            TaskSeries?      @relation(fields: [seriesId], references: [id], onDelete: Restrict)
+  occurrenceKey     String           @unique
+  originalLocalDate DateTime?        @db.Date
+  scheduledStartAt  DateTime?        @db.Timestamptz(3)
+  scheduledEndAt    DateTime?        @db.Timestamptz(3)
+  status            Completion       @default(incomplete)
+  completedAt       DateTime?        @db.Timestamptz(3)
+  canceledAt        DateTime?        @db.Timestamptz(3)
+  overridden        Boolean          @default(false)
+  snapshot          Json
+  version           Int              @default(1)
+  createdAt         DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime         @updatedAt @db.Timestamptz(3)
+  priorities        DailyPriority[]
+  readingSessions   ReadingSession[]
+
+  @@index([scheduledStartAt, scheduledEndAt])
+  @@index([taskId, status])
+  @@index([completedAt])
+}
+
+model FixedSeries {
+  id              String     @id @default(uuid()) @db.Uuid
+  rootSeriesId    String     @db.Uuid
+  root            SeriesRoot @relation(fields: [rootSeriesId], references: [id], onDelete: Restrict)
+  kind            FixedKind
+  title           String     @db.VarChar(200)
+  notes           String?    @db.VarChar(5000)
+  location        String?    @db.VarChar(200)
+  weekdays        Int[]
+  localStartTime  String     @db.VarChar(5)
+  localEndTime    String     @db.VarChar(5)
+  endsNextDay     Boolean    @default(false)
+  timezone        String     @default("Asia/Tehran")
+  effectiveFrom   DateTime   @db.Date
+  effectiveUntil  DateTime?  @db.Date
+  everyWeeks      Int        @default(1)
+  anchorWeekStart DateTime?  @db.Date
+  parity          Int?
+  version         Int        @default(1)
+  deletedAt       DateTime?  @db.Timestamptz(3)
+  createdAt       DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime   @updatedAt @db.Timestamptz(3)
+  terminatedAt    DateTime?  @db.Date
+
+  @@unique([rootSeriesId, effectiveFrom])
+  @@index([effectiveFrom, effectiveUntil])
+}
+
+model OccurrenceException {
+  id                String        @id @default(uuid()) @db.Uuid
+  rootSeriesId      String        @db.Uuid
+  root              SeriesRoot    @relation(fields: [rootSeriesId], references: [id], onDelete: Restrict)
+  originalLocalDate DateTime      @db.Date
+  kind              ExceptionKind
+  title             String?       @db.VarChar(200)
+  startAt           DateTime?     @db.Timestamptz(3)
+  endAt             DateTime?     @db.Timestamptz(3)
+  version           Int           @default(1)
+  createdAt         DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime      @updatedAt @db.Timestamptz(3)
+
+  @@unique([rootSeriesId, originalLocalDate])
+  @@index([startAt, endAt])
+}
+
+model Book {
+  id          String           @id @default(uuid()) @db.Uuid
+  ownerId     String           @db.Uuid
+  owner       Owner            @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  title       String           @db.VarChar(200)
+  author      String?          @db.VarChar(200)
+  description String?          @db.VarChar(5000)
+  totalPages  Int?
+  currentPage Int?
+  status      BookStatus       @default(reading)
+  deletedAt   DateTime?        @db.Timestamptz(3)
+  version     Int              @default(1)
+  createdAt   DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime         @updatedAt @db.Timestamptz(3)
+  sessions    ReadingSession[]
+
+  @@index([ownerId, createdAt, id])
+}
+
+model ReadingSession {
+  id                String          @id @default(uuid()) @db.Uuid
+  ownerId           String          @db.Uuid
+  owner             Owner           @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  startAt           DateTime        @db.Timestamptz(3)
+  endAt             DateTime        @db.Timestamptz(3)
+  pages             Int?
+  bookId            String?         @db.Uuid
+  book              Book?           @relation(fields: [bookId], references: [id], onDelete: SetNull)
+  bookTitleSnapshot String?         @db.VarChar(200)
+  occurrenceId      String?         @db.Uuid
+  occurrence        TaskOccurrence? @relation(fields: [occurrenceId], references: [id], onDelete: SetNull)
+  topic             String?         @db.VarChar(200)
+  note              String?         @db.VarChar(5000)
+  version           Int             @default(1)
+  createdAt         DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime        @updatedAt @db.Timestamptz(3)
+
+  @@index([ownerId, startAt, id])
+  @@index([ownerId, endAt])
+  @@index([bookId, startAt])
+}
+
+model WeeklyGoal {
+  id        String   @id @default(uuid()) @db.Uuid
+  ownerId   String   @db.Uuid
+  owner     Owner    @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  weekStart DateTime @db.Date
+  unit      GoalUnit
+  target    Int
+  version   Int      @default(1)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  @@unique([ownerId, weekStart])
+}
+
+model DefaultGoal {
+  id                String    @id @default(uuid()) @db.Uuid
+  ownerId           String    @db.Uuid
+  owner             Owner     @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  effectiveFromWeek DateTime  @db.Date
+  unit              GoalUnit?
+  target            Int?
+  version           Int       @default(1)
+  createdAt         DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime  @updatedAt @db.Timestamptz(3)
+
+  @@unique([ownerId, effectiveFromWeek])
+}
+
+model DailyPriority {
+  id           String         @id @default(uuid()) @db.Uuid
+  ownerId      String         @db.Uuid
+  owner        Owner          @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  localDate    DateTime       @db.Date
+  occurrenceId String         @db.Uuid
+  occurrence   TaskOccurrence @relation(fields: [occurrenceId], references: [id], onDelete: Restrict)
+  position     Int
+
+  @@unique([ownerId, localDate, position])
+  @@unique([ownerId, localDate, occurrenceId])
+}
+
+model IdempotencyRecord {
+  id             String   @id @default(uuid()) @db.Uuid
+  ownerId        String   @db.Uuid
+  owner          Owner    @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  operation      String   @db.VarChar(200)
+  key            String   @db.Uuid
+  requestDigest  String   @db.VarChar(64)
+  responseStatus Int
+  responseBody   Json
+  createdAt      DateTime @default(now()) @db.Timestamptz(3)
+  expiresAt      DateTime @db.Timestamptz(3)
+
+  @@unique([ownerId, operation, key])
+  @@index([expiresAt])
+}

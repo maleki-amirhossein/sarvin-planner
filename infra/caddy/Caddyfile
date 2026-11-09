@@ -1,0 +1,13 @@
+{$CADDY_SITE_ADDRESS: :80} {
+	encode zstd gzip
+
+	# Preserve /api: NestJS owns the prefix. handle_path would strip it.
+	@api path /api /api/*
+	handle @api {
+		reverse_proxy api:3001
+	}
+
+	handle {
+		reverse_proxy web:3000
+	}
+}
