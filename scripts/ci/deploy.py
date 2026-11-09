@@ -53,11 +53,48 @@ def unpack(bundle, directory, expected):
             require(member.name != 'release.json' or member.size < 16384, 'Oversized manifest')
             with archive.extractfile(member) as source, (directory / member.name).open('xb') as target:
                 shutil.copyfileobj(source, target)
+    return validate_files(directory)
+
+
+def validate_files(directory):
     metadata = json.loads((directory / 'release.json').read_text())
     require(set(metadata['files']) == FILES - {'release.json'}, 'Unexpected checksum entries')
     for name, expected_digest in metadata['files'].items():
         require(digest(directory / name) == expected_digest, 'File checksum mismatch')
     return metadata
+
+
+def receive(stream, directory, expected):
+    # Stream flat entries to staging once, avoiding a second large bundle copy
+    # on this shared, small server. Nothing is used until the whole hash matches.
+    class Reader:
+        def __init__(self):
+            self.hash = hashlib.sha256()
+            self.size = 0
+
+        def read(self, size):
+            chunk = stream.read(size)
+            self.size += len(chunk)
+            require(self.size <= MAX_BUNDLE, 'Bundle exceeds size limit')
+            require(shutil.disk_usage(directory).free > 512 * 1024**2, 'Insufficient staging disk space')
+            self.hash.update(chunk)
+            return chunk
+
+    reader = Reader()
+    seen = set()
+    with tarfile.open(fileobj=reader, mode='r|') as archive:
+        for member in archive:
+            require(member.name in FILES and member.name not in seen, 'Unexpected or duplicate bundle members')
+            require(member.isfile() and 0 < member.size <= MAX_BUNDLE, 'Invalid bundle entry')
+            require(member.name != 'release.json' or member.size < 16384, 'Oversized manifest')
+            seen.add(member.name)
+            with archive.extractfile(member) as source, (directory / member.name).open('xb') as target:
+                shutil.copyfileobj(source, target)
+    while reader.read(1024 * 1024):
+        pass
+    require(seen == FILES, 'Incomplete bundle')
+    require(reader.hash.hexdigest() == expected, 'Bundle checksum mismatch')
+    return validate_files(directory)
 
 
 def migrations(source):
@@ -160,7 +197,7 @@ def deploy(directory, sha, number, attempt):
         release_id = f'ci-{sha}-{number}-{attempt}'
         release = ROOT / 'releases' / release_id
         require(not release.exists(), 'Release already exists')
-        require(shutil.disk_usage(ROOT).free > 2 * 1024**3, 'Less than 2 GiB free; administrator cleanup required')
+        require(shutil.disk_usage(ROOT).free > 1536 * 1024**2, 'Less than 1.5 GiB free; administrator cleanup required')
         metadata = json.loads((directory / 'release.json').read_text())
         require((metadata['sha'], metadata['run'], metadata['attempt']) == (sha, number, attempt), 'Release identity mismatch')
         require(metadata['branch'] in ('main', 'master'), 'Only main/master may deploy')
@@ -251,16 +288,7 @@ def gateway():
     incoming.mkdir(mode=0o700, exist_ok=True)
     directory = Path(tempfile.mkdtemp(prefix=f'{number}-{attempt}-', dir=incoming))
     try:
-        bundle = directory / 'bundle.tar'
-        size = 0
-        with bundle.open('xb') as target:
-            while chunk := sys.stdin.buffer.read(1024 * 1024):
-                size += len(chunk)
-                require(size <= MAX_BUNDLE, 'Bundle exceeds size limit')
-                require(shutil.disk_usage(ROOT).free > 2 * 1024**3, 'Insufficient staging disk space')
-                target.write(chunk)
-        unpack(bundle, directory, checksum)
-        bundle.unlink()
+        receive(sys.stdin.buffer, directory, checksum)
         unit = f'sarvin-deploy-{number}-{attempt}'
         result = subprocess.run(['systemd-run', '--quiet', '--wait', '--collect', '--service-type=exec',
                                  '--property=UMask=0077', '--property=RuntimeMaxSec=1500',

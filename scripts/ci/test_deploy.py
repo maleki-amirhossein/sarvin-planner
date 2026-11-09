@@ -1,15 +1,17 @@
 import hashlib
 import io
 import json
+import os
 from pathlib import Path
 import tarfile
 import tempfile
+import subprocess
 import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
 
 import deploy as deployment
-from deploy import digest, migrations, parse_command, pending_migrations, unpack
+from deploy import digest, migrations, parse_command, pending_migrations, receive, unpack
 
 
 class DeploymentBoundaryTests(unittest.TestCase):
@@ -48,6 +50,30 @@ class DeploymentBoundaryTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'checksum'):
                 unpack(bundle, root, '0' * 64)
             self.assertIn('files', unpack(bundle, root, digest(bundle)))
+
+    def test_stream_receiver_checks_full_hash_and_rejects_unsafe_members(self):
+        for mode in ['valid', 'corrupt', 'traversal']:
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                mutation = (lambda member: setattr(member, 'name', '../bad')) if mode == 'traversal' else None
+                bundle = self.make_bundle(root, mutation)
+                with bundle.open('rb') as source:
+                    if mode == 'valid':
+                        self.assertIn('files', receive(source, root, digest(bundle)))
+                    else:
+                        with self.assertRaises(ValueError):
+                            receive(source, root, '0' * 64 if mode == 'corrupt' else digest(bundle))
+
+    def test_runner_hook_rejects_prs_other_refs_and_other_workflows(self):
+        base = dict(os.environ, GITHUB_REPOSITORY='maleki-amirhossein/sarvin-planner',
+                    GITHUB_EVENT_NAME='push', GITHUB_REF='refs/heads/main', GITHUB_JOB='deploy',
+                    GITHUB_WORKFLOW_REF='maleki-amirhossein/sarvin-planner/.github/workflows/ci-cd.yml@refs/heads/main')
+        script = Path(__file__).with_name('runner-guard.sh')
+        self.assertEqual(subprocess.run(['bash', str(script)], env=base, capture_output=True).returncode, 0)
+        for change in [{'GITHUB_EVENT_NAME': 'pull_request'}, {'GITHUB_REF': 'refs/pull/1/merge'},
+                       {'GITHUB_WORKFLOW_REF': 'untrusted'}, {'GITHUB_JOB': 'verify-build'}]:
+            with self.subTest(change=change):
+                self.assertNotEqual(subprocess.run(['bash', str(script)], env=base | change, capture_output=True).returncode, 0)
 
     def test_no_traversal_symlinks_duplicates_or_extra_paths(self):
         def traversal(member):

@@ -159,5 +159,5 @@ current release's `images.env`. Application releases do not execute repository
 shell scripts as root. Gateway changes require administrator review/installation.
 No-migration failures can roll back images; attempted schema changes require forward
 repair and must never trigger automatic data restore. Preserve current/previous
-images, all backups and unrelated Echoa services. Eight deployment boundary/recovery
+images, all backups and unrelated Echoa services. Ten deployment boundary/recovery
 tests passed; actual workflow verification is recorded in QA and handoff.

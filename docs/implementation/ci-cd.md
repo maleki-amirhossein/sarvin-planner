@@ -12,7 +12,9 @@ branches target the same application/database: the later successful run wins.
    HTTP/HTTPS authentication and domain acceptance run against disposable PostgreSQL 18.
 3. Build API/web amd64 Docker images tagged with commit SHA, run number and attempt.
    Package images, committed source and SHA-256 checksums; retain the artifact for three days.
-4. A separate environment-bound job sends the package over pinned-host SSH.
+4. A separate environment-bound job on the non-root echoa deployment runner downloads
+   the verified artifact, then sends it over pinned-host **loopback** SSH. The server
+   initiates the GitHub connection because hosted runners cannot reach its SSH port.
 5. The host validates archive boundaries, tags, architecture, revision, migration
    checksums and available disk space. Existing applied migrations cannot be rewritten.
 6. Create a private pre-deployment database backup. When new migrations exist,
@@ -31,8 +33,8 @@ The worker runs as a transient systemd service so losing SSH does not kill a mig
 
 ## Credentials and host boundary
 
-Production environment secret: `DEPLOY_SSH_KEY`. Variables: `DEPLOY_HOST` and
-`DEPLOY_KNOWN_HOSTS`. The host key was obtained through the existing authenticated
+Production environment secret: `DEPLOY_SSH_KEY`. Variables: `DEPLOY_HOST` (127.0.0.1) and
+`DEPLOY_KNOWN_HOSTS`. `HostKeyAlias` pins the actual public host identity for the loopback connection. The host key was obtained through the existing authenticated
 administrator SSH connection, not trusted from an unauthenticated key scan.
 The dedicated deploy public key has `restrict,command="/usr/local/lib/sarvin/deploy.py"`
 in root's authorized_keys: shell commands, PTY, forwarding and agent forwarding
@@ -94,9 +96,36 @@ release images/artifacts and the backup policy instead of pruning other projects
 
 ## Verification record
 
-Local deployment boundary/recovery tests cover command injection, traversal,
+Ten local deployment boundary/recovery tests cover command injection, traversal,
 symlinks, duplicate entries, bundle integrity, applied-migration changes, safe
 image rollback and migration-failure forward repair. Restricted SSH rejected a
 real arbitrary-shell request. The fixed runtime configuration validated and the
 daily backup service ran successfully after bootstrap. See QA/handoff for the
 actual GitHub run and public deployment result.
+
+## Deployment runner
+
+`echoa-sarvin-deploy` runs as the dedicated `sarvin-ci` user, without sudo or Docker
+group access. Only the deploy job uses it; builds and PR tests stay GitHub-hosted.
+The root-owned pre-job hook checks repository, workflow, event, branch and job
+identity. The repository requires approval for **every external contributor's PR
+workflow**; review workflow changes before approving any such run. Do not run
+untrusted code on this server runner or relax those settings.
+
+Runner config/binaries are root-owned; only `_work` and `_diag` are writable.
+The hook is `/usr/local/lib/sarvin-runner-guard.sh`. The systemd service has a
+768 MiB memory cap and 75% CPU quota; release artifacts are removed after the job.
+`install-runner.sh` reads a short-lived repository runner registration token from
+stdin; a broad account token is never copied to the server. The distribution
+(v2.338.2) is checked against GitHub's SHA-256 before installation.
+
+Automatic runner binary updates are deliberately disabled to preserve root-owned
+configuration. Administrators must update it when GitHub releases new versions
+(within GitHub's 30-day update window, sooner for critical releases), preserving
+the hook, permissions and service limits. Stop the runner when idle, replace the
+verified official binaries, reinstall permissions and restart its systemd service.
+Application deployments themselves remain automatic and require no approval.
+
+The first hosted-runner attempt passed all verification/build steps but timed out
+connecting to echoa:22 before any release or database change. The outbound runner
+path replaces that network dependency; see the QA record for the successful run.

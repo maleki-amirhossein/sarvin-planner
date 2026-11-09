@@ -141,7 +141,7 @@ Updated the management wrapper and daily backup service to include public config
 
 Added main/master push deployment and PR verification in GitHub Actions, pinned
 actions, Node 24/pnpm 10.34.9, disposable PostgreSQL acceptance, immutable amd64
-packages, checksums, restricted SSH and host-owned runtime configuration. Eight
+packages, checksums, restricted SSH and host-owned runtime configuration. Ten
 local boundary/recovery tests passed, including unsafe archive rejection, applied
 migration immutability, no-schema rollback and migration forward-repair behavior.
 Repository lint, shell syntax and workflow lint passed (installed actionlint does
@@ -150,3 +150,9 @@ excluded). Production environment restricts deployments to main/master. The actu
 restricted key rejected `whoami`; fixed Compose validated and scheduled backup
 service reran successfully. First GitHub deployment verification is pending below.
 No browser control, owner reset, production fixtures or unrelated service changes.
+
+The first workflow run 42580722367 passed hosted verification/build but could not
+reach echoa:22 (timeout; no deployment started). The deployment job now uses a
+dedicated non-root outbound runner and loopback restricted SSH. Ten local tests
+include streaming package integrity and rejection of untrusted runner contexts.
+External PR workflow approval is required for all outside contributors.
