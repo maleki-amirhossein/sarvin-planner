@@ -137,3 +137,13 @@ First successful production run: [42582507446](https://github.com/maleki-amirhos
 The existing owner session survived replacement of API/web, private task data was
 unchanged, and logout/public HTTPS smoke passed from the client machine.
 Runner update requirements follow [GitHub’s runner reference](https://docs.github.com/en/actions/reference/runners/self-hosted-runners#runner-software-updates-on-self-hosted-runners).
+
+## Compose migration command correction — 2026-11-09
+
+`docker compose run` does not accept `--no-build`. Use the reviewed
+`run_migrations` helper with `run --rm --no-deps --pull never migrate` after image
+validation/loading. The host-owned deployment script was patched to match this
+fix; its original copy is retained beside it. Thirteen deployment tests now include
+a check of migration options against the actual installed Compose CLI help.
+Run 42596150213 failed before SQL execution, then was recovered forward under the
+deployment lock with its original backup and verified release. See QA/handoff.

@@ -274,3 +274,31 @@ category/task/calendar edits remain separate from this verified published snapsh
 Docker production images do not hot-reload source; GitHub deployment updates only
 the remote server. Browser visual acceptance remains deferred; original 181/210
 checklist unchanged.
+
+
+## Pending changes published and migration-command repair — 2026-11-09
+
+**Done (public release):** `f6de15b` is pushed and live: music task category, calendar
+hourly grid visibility and immediate explicit Cancel. Local builds/types/lint/
+contracts, 16 unit tests, disposable database/auth/domain acceptance and deployment
+tests passed. Actions run `42596150213` passed verification/build but failed when
+its migration command used unsupported `docker compose run --no-build`. The safety
+guard stopped the API; no SQL had executed. The private pre-release backup existed.
+
+Reviewed the installed host script against the repository SHA-256 baseline, saved
+its previous version and installed the narrow fix: `run --rm --no-deps --pull never
+migrate`. Added a real Compose CLI option-compatibility regression check; all 13
+deployment tests passed. Under the deployment lock, confirmed no unfinished
+migrations and exactly the expected new migration, applied it, switched to the
+verified candidate and restored healthy API/web. Receipt sequence 8/1 now records
+`deployed` with a recovery note. The original Actions attempt remains failed; no
+claim of an automatic-success result. No restore/reset/provisioning was performed.
+
+Public app/PWA/personal-UI checks passed. Authenticated music filtering works,
+existing tasks/fixed schedules/settings fingerprints are unchanged, and the
+pre-release login session survived. Its verification cookie was removed after
+logout. Verified the nonempty mode-600 backup, database music enum, exact migration
+checksum and absence of unfinished migrations. Browser interaction acceptance
+remains deferred; original 181/210 unchanged. Local Docker still runs the prior
+verified UI snapshot; the server is the target of this request. The reviewed host
+fix is committed with CI skipped to avoid an unnecessary second deployment.

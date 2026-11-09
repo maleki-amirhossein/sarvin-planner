@@ -131,6 +131,12 @@ def compose(release, *args, **kwargs):
                 '-f', str(RUNTIME / 'compose.public-proxy.yaml'), *args], **kwargs)
 
 
+def run_migrations(release):
+    # `run` has no --no-build option. Images are already validated/loaded, and
+    # --pull never uses those exact local tags without contacting a registry.
+    compose(release, 'run', '--rm', '--no-deps', '--pull', 'never', 'migrate')
+
+
 def switch(release):
     temporary = ROOT / '.current-next'
     temporary.unlink(missing_ok=True)
@@ -259,7 +265,7 @@ def deploy(directory, sha, number, attempt):
             save_json(STATE, state)
             if pending:
                 migration_attempted = True
-                compose(release, 'run', '--rm', '--no-deps', '--no-build', 'migrate')
+                run_migrations(release)
             switch(release)
             switched = True
             compose(release, 'up', '-d', '--no-deps', '--no-build', '--pull', 'never',

@@ -215,3 +215,10 @@ quotes, fake progress or adding personal schedules without explicit input.
 Personal UI commit `4aae047` is publicly deployed via successful Actions run
 `42593323279`; served-copy/style, API/PWA smoke and session-continuity checks passed.
 Full browser visual acceptance remains deferred.
+
+Public pending-change release `f6de15b` is live (music task category, hourly grid
+lines, explicit task Cancel). Run 42596150213 failed on unsupported Compose `run
+--no-build`; a reviewed host repair applied the migration and restored the release.
+Use `run_migrations` with `--pull never`, never `run --no-build`. Thirteen deployment
+tests include real CLI option compatibility. Public checks and session/data
+continuity passed; original failed Actions status is retained as audit history.

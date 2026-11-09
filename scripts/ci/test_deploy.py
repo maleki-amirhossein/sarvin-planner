@@ -6,6 +6,7 @@ from pathlib import Path
 import tarfile
 import tempfile
 import subprocess
+import shutil
 import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -15,6 +16,18 @@ from deploy import digest, migrations, parse_command, pending_migrations, receiv
 
 
 class DeploymentBoundaryTests(unittest.TestCase):
+    @unittest.skipUnless(shutil.which('docker'), 'Docker CLI required')
+    def test_migration_options_are_supported_by_installed_compose(self):
+        help_text = subprocess.run(['docker', 'compose', 'run', '--help'],
+                                   check=True, capture_output=True, text=True).stdout
+        with patch.object(deployment, 'compose') as compose:
+            deployment.run_migrations(Path('/release'))
+        args = compose.call_args.args[1:]
+        for option in (arg for arg in args if arg.startswith('--')):
+            self.assertIn(option, help_text, f'Unsupported migration CLI option: {option}')
+        self.assertNotIn('--build', args)
+        self.assertEqual(args[args.index('--pull') + 1], 'never')
+
     def test_only_fixed_command_is_accepted(self):
         valid = 'deploy ' + 'a' * 40 + ' 12 1 ' + 'b' * 64
         self.assertEqual(parse_command(valid)[1:3], ('12', '1'))
