@@ -17,7 +17,6 @@ import {
   Clock3,
   BookOpen,
   Sun,
-  Sparkles,
 } from "lucide-react";
 import { api, type DTO } from "@/lib/api";
 import { useApi } from "@/lib/queries";
@@ -35,7 +34,6 @@ import { Modal } from "./ui/overlays";
 import { WeekCalendar } from "./week-calendar";
 import { useEditor } from "./editor-provider";
 import {
-  DateBar,
   DateNavigation,
   Empty,
   EventCard,
@@ -44,7 +42,7 @@ import {
   TaskRow,
 } from "./planner-parts";
 import { QueryState } from "./query-state";
-import { BotanicalArt } from "./botanical-art";
+import { SarvinWelcome } from "./sarvin-welcome";
 import { FormFeedback, useFormAction } from "./form-support";
 function onDay(events: DTO["ScheduleEvent"][], day: string) {
   const start = inputInstant(day, "00:00"),
@@ -98,9 +96,9 @@ function Priorities({ date }: { date: string }) {
               <p className="mt-1 text-xs leading-6 text-muted-foreground">
                 {
                   [
-                    "مهم‌ترین قدم این روزت چیست؟",
-                    "برای یک کار مهم دیگر جا باز کن.",
-                    "یک قدم کوچک هم کافی است.",
+                    "امروز کدام کار برایت مهم‌تر است؟",
+                    "اگر فرصت داشتی، یک قدم دیگر.",
+                    "برای استراحتت هم جا نگه دار.",
                   ][p.data.occurrenceIds.length + i]
                 }
               </p>
@@ -149,10 +147,18 @@ export function TodayPage() {
     summary = schedule.data?.days.find((d) => d.localDate === date);
   return (
     <>
-      <DateBar
-        title={date === localDate(new Date()) ? "امروزت را بساز" : "برنامه روز"}
-        weekly={false}
+      <SarvinWelcome
+        title={
+          date === localDate(new Date())
+            ? "سروین جان، امروز به آهنگ تو"
+            : "سروین جان، روزی به آهنگ تو"
+        }
+        description="میان درس‌های مهندسی صنایع، نغمه‌های تار و سه‌تار و لحظه‌های زندگی، جایی هم برای آرامش خودت بگذار."
+        date={formatJalaliDate(fromLocalDate(date))}
       />
+      <div className="mb-5 flex flex-wrap justify-end">
+        <DateNavigation weekly={false} />
+      </div>
       <div className="mb-6 grid grid-cols-7 gap-1 sm:gap-2">
         {Array.from({ length: 7 }, (_, i) => shiftDate(week, i)).map((day) => (
           <button
@@ -200,8 +206,8 @@ export function TodayPage() {
                 <DayTimeline events={events} date={date} />
                 {!events.length && (
                   <Empty>
-                    این روز هنوز برنامه‌ای ندارد. زمانی برای کارهای مهمت کنار
-                    بگذار.
+                    سروین جان، این روز هنوز خالی است؛ می‌توانی برای درس، ساز یا
+                    یک استراحت دل‌چسب زمانی کنار بگذاری.
                   </Empty>
                 )}
               </div>
@@ -234,7 +240,10 @@ export function TodayPage() {
               <TaskRow key={t.id} task={t} />
             ))}
             {inbox.data && !inbox.data.items.length && (
-              <Empty>فهرستت سبک است؛ هر ایده تازه را اینجا ثبت کن.</Empty>
+              <Empty>
+                اینجا برای فکرها و ایده‌های تو جا هست؛ هر وقت خواستی، یادداشتشان
+                کن.
+              </Empty>
             )}
             <Link
               href="/tasks?view=overdue"
@@ -354,21 +363,17 @@ export function WeekPage() {
   }));
   return (
     <div className="week-dashboard">
-      <section className="dashboard-hero">
-        <div className="relative z-10">
-          <p className="mb-2 flex items-center gap-2 text-xs font-medium text-primary">
-            <Sparkles size={15} aria-hidden="true" /> فرصتی برای یک شروع تازه
-          </p>
-          <h1 className="text-2xl font-extrabold leading-relaxed xl:text-3xl">
-            هفته‌ای با فرصت‌های تازه
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+      <SarvinWelcome
+        weekly
+        title="سروینِ عزیز، هفته‌ای به آهنگ تو"
+        description="برای آموختن، برای نواختن، برای خودِ عزیزت؛ هر کدام به اندازه‌ای که حال تو با آن خوب است."
+        date={
+          <>
             {formatJalaliDate(fromLocalDate(week), "d MMMM")} تا{" "}
             {formatJalaliDate(fromLocalDate(shiftDate(week, 6)), "d MMMM yyyy")}
-          </p>
-        </div>
-        <BotanicalArt className="hero-botanical" />
-      </section>
+          </>
+        }
+      />
       <div className="week-summary">
         <div className="summary-pill">
           <span className="summary-icon bg-personal text-[#c77542]">
@@ -501,7 +506,9 @@ export function WeekPage() {
                 {selected.map((e) => (
                   <EventCard key={e.id} event={e} date={date} />
                 ))}
-                {!selected.length && <Empty>روز آزاد برای برنامه‌ریزی</Empty>}
+                {!selected.length && (
+                  <Empty>فرصتی برای ساز، استراحت یا هرچه دوست داری</Empty>
+                )}
                 <Button
                   variant="outline"
                   className="w-full"
@@ -578,7 +585,7 @@ export function WeekPage() {
                     )}
                     {!items.length && (
                       <p className="py-2 text-sm text-muted-foreground">
-                        هنوز برنامه‌ای ندارد.
+                        هنوز برنامه‌ای ندارد؛ فرصتی برای خودت.
                       </p>
                     )}
                     <Button

@@ -38,15 +38,22 @@ export const number = (v: number) =>
 export function DateBar({
   title,
   weekly = true,
+  description,
 }: {
   title: string;
   weekly?: boolean;
+  description?: string;
 }) {
   const { date, week } = useSelectedDate();
   return (
     <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
       <div>
         <h1 className="text-2xl">{title}</h1>
+        {description && (
+          <p className="mt-2 max-w-xl text-sm leading-7 text-muted-foreground">
+            {description}
+          </p>
+        )}
         <p className="mt-2 text-sm text-muted-foreground">
           {weekly
             ? `${formatJalaliDate(fromLocalDate(week), "d MMMM")} تا ${formatJalaliDate(fromLocalDate(shiftDate(week, 6)))}`
@@ -120,7 +127,7 @@ export function GoalCard({ week }: { week: string }) {
               </p>
               <p className="text-sm">
                 {goal.data.remaining === 0
-                  ? `هدف محقق شد · ${number(goal.data.percent ?? 0)}٪`
+                  ? `سروین جان، به هدفت رسیدی · ${number(goal.data.percent ?? 0)}٪`
                   : `${number(goal.data.remaining ?? 0)} ${units[goal.data.unit]} تا هدف باقی مانده`}
               </p>
             </>
@@ -128,7 +135,7 @@ export function GoalCard({ week }: { week: string }) {
             <>
               <ReadingArt />
               <p className="text-center text-sm leading-7 text-muted-foreground">
-                با یک هدف کوچک شروع کن.
+                سروینِ عزیز، چند صفحه برای دل خودت؛ به اندازهٔ فرصت و حوصله‌ات.
               </p>
             </>
           )}

@@ -48,8 +48,8 @@ export function SettingsPage() {
     <div className="mx-auto max-w-4xl space-y-6">
       <div>
         <h1 className="text-2xl">تنظیمات</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          برنامه‌های ثابت و فضای شخصی تو
+        <p className="mt-2 text-sm leading-7 text-muted-foreground">
+          سروینِ عزیز، این فضا برای توست؛ آن را با ریتم زندگی خودت هماهنگ کن.
         </p>
       </div>
       <PwaInstall />

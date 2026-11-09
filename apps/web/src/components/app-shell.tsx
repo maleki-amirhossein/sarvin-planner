@@ -24,7 +24,7 @@ import { ActionMenu } from "./ui/overlays";
 import { JalaliDatePicker } from "./jalali-date-picker";
 import { FormFeedback, units, useFormAction } from "./form-support";
 import { QueryState } from "./query-state";
-import { BotanicalArt } from "./botanical-art";
+import { SarvinMusicArt } from "./sarvin-welcome";
 const navigation = [
   { href: "/today", label: "امروز", icon: House },
   { href: "/week", label: "هفته", icon: CalendarDays },
@@ -94,7 +94,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
       >
         رفتن به محتوای اصلی
       </a>
-      <aside className="shell-sidebar fixed inset-y-0 start-0 z-20 hidden w-52 border-e p-5 lg:flex lg:flex-col">
+      <aside className="shell-sidebar fixed inset-y-0 start-0 z-20 hidden w-52 overflow-y-auto border-e p-5 lg:flex lg:flex-col">
         <Link href="/today" className="mb-10 mt-2 flex items-center gap-2">
           <Image src="/sarvin-planner-logo.png" alt="" width={44} height={44} />
           <span className="text-xl font-bold">
@@ -108,10 +108,10 @@ function ShellContent({ children }: { children: React.ReactNode }) {
           </span>
         </Link>
         {nav()}
-        <div className="sidebar-note mt-auto text-center text-primary">
-          <BotanicalArt className="sidebar-sprig" />
-          <p className="text-lg font-bold leading-8">هر روز، یک قدم کوچک</p>
-          <span className="note-underline" aria-hidden="true" />
+        <div className="sarvin-sidebar-note">
+          <SarvinMusicArt />
+          <p>سروین جان، به آهنگ خودت</p>
+          <span>کمی درس، کمی ساز، زمانی برای خودت</span>
         </div>
       </aside>
       <div
@@ -128,7 +128,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
             <strong>سروین</strong>
           </Link>
           <p className="shell-caption hidden text-sm text-muted-foreground lg:block">
-            برنامه‌ریز شخصی تو
+            با مهر، برای روزهای سروین
           </p>
           <div className="flex items-center gap-2">
             <Button onClick={() => editor.task()}>
@@ -186,8 +186,8 @@ function Onboarding() {
     client = useQueryClient();
   return (
     <section className="surface mx-auto max-w-xl space-y-5 p-6">
-      <p className="text-sm text-primary">شروع آرام با سروین</p>
-      <h1 className="text-2xl">برنامه‌ات از چه روزی شروع شود؟</h1>
+      <p className="text-sm text-primary">سروین جان، اینجا برای تو ساخته شده</p>
+      <h1 className="text-2xl">از کدام روز همراهت باشیم؟</h1>
       <p className="text-sm leading-7 text-muted-foreground">
         زمان محلی تهران و شروع هفته از شنبه است. برنامه ثابت کار، شنبه تا
         چهارشنبه ساعت ۰۸:۰۰ تا ۱۳:۰۰، از تاریخ انتخابی شما ثبت می‌شود. کلاس‌ها

@@ -77,11 +77,12 @@ export function TasksPage() {
   });
   return (
     <>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl">کارها و ایده‌ها</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            اول ثبت کن، بعد برایش زمان پیدا کن.
+          <p className="mt-2 max-w-xl text-sm leading-7 text-muted-foreground">
+            سروین جان، فکرهایت اینجا می‌مانند؛ با خیال آسوده، هر وقت آماده بودی
+            به آن‌ها برس.
           </p>
         </div>
         <Button onClick={() => editor.task()}>
@@ -168,7 +169,7 @@ export function TasksPage() {
           <Empty>
             {q || category || priority
               ? "کاری با این فیلترها پیدا نشد."
-              : "اینجا هنوز کاری نیست؛ با یک عنوان ساده شروع کن."}
+              : "سروین جان، هر ایدهٔ کوچک هم اینجا جایی دارد؛ هر وقت خواستی، ثبتش کن."}
           </Empty>
         )}
         <Pager
@@ -213,7 +214,10 @@ function ReadingContent() {
     report = useApi("getWeeklyReport", { query: { weekStart: week } });
   return (
     <>
-      <DateBar title="زمانی برای خواندن" />
+      <DateBar
+        title="سروین جان، چند صفحه برای خودت"
+        description="کنار نغمه‌هایی که دوست داری، بگذار واژه‌ها هم سهمی از روزت داشته باشند."
+      />
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-6">
           <section className="surface p-5">
@@ -270,7 +274,8 @@ function ReadingContent() {
             </div>
             {books.data && !books.data.items.length && (
               <Empty>
-                کتاب یا موضوعی اضافه کن. بدون کتاب هم می‌توانی مطالعه ثبت کنی.
+                کتابی که دوست داری یا موضوعی که کنجکاوت کرده اینجا جا دارد. بدون
+                انتخاب کتاب هم می‌توانی مطالعه ثبت کنی.
               </Empty>
             )}
             <Pager
@@ -426,14 +431,17 @@ export function ReviewPage() {
     schedule = useApi("getSchedule", { query: { from, to } });
   return (
     <>
-      <DateBar title="نگاهی به هفته" />
+      <DateBar
+        title="سروینِ عزیز، هفته‌ات را با مهربانی مرور کن"
+        description="این صفحه برای دیدن مسیر توست؛ هم قدم‌هایی که برداشتی، هم چیزهایی که به زمان بیشتری نیاز دارند."
+      />
       <QueryState query={report} />
       {report.data && (
         <>
           <p className="mb-4 text-sm text-muted-foreground">
             {report.data.inProgress
-              ? "این هفته هنوز در جریان است؛ فرصت ادامه دادن هست."
-              : "مرور کارها و زمانی که برای خودت گذاشتی."}
+              ? "هفته هنوز ادامه دارد، سروین جان؛ لازم نیست همه‌چیز یک‌باره پیش برود."
+              : "برای وقتی که به یادگیری، علاقه‌ها و خودت اختصاص دادی، ارزش قائل باش."}
           </p>
           <div className="mb-6 grid grid-cols-2 gap-3 xl:grid-cols-4">
             {[

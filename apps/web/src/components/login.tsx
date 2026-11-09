@@ -6,6 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { api, resetCsrf } from "@/lib/api";
 import { Button } from "./ui/button";
+import { SarvinMusicArt } from "./sarvin-welcome";
 const subscribeReady = () => () => {};
 const readyClient = () => true,
   readyServer = () => false;
@@ -51,11 +52,11 @@ export function Login({ expired = false }: { expired?: boolean }) {
     <div
       className={
         expired
-          ? "fixed inset-0 z-[100] overflow-y-auto bg-background p-5"
-          : "flex min-h-svh items-center justify-center p-5"
+          ? "sarvin-login fixed inset-0 z-[100] overflow-y-auto p-5"
+          : "sarvin-login flex min-h-svh items-center justify-center p-5"
       }
     >
-      <main className="surface mx-auto w-full max-w-md p-7 sm:p-9">
+      <main className="surface sarvin-login-card mx-auto w-full max-w-md p-7 sm:p-9">
         <Image
           src="/sarvin-planner-logo.png"
           alt="نشان سروین"
@@ -64,11 +65,15 @@ export function Login({ expired = false }: { expired?: boolean }) {
           className="mx-auto mb-3"
           loading="eager"
         />
-        <h1 className="text-center text-2xl">به پلنر سروین خوش آمدید</h1>
+        <p className="sarvin-dedication mb-2 text-center">
+          برنامه‌ریز سروین · با مهر، فقط برای تو
+        </p>
+        <h1 className="text-center text-2xl">خوش آمدی، سروین جان</h1>
+        {!expired && <SarvinMusicArt className="sarvin-login-art" />}
         <p className="mb-7 mt-2 text-center text-sm leading-7 text-muted-foreground">
           {expired
-            ? "نشست شما پایان یافته است. دوباره وارد شوید؛ فرم باز شما حفظ شده است."
-            : "جایی برای روزهای منظم‌تر و فرصت‌های بیشتر برای مطالعه."}
+            ? "سروین جان، برای ادامه دوباره وارد شو؛ پیش‌نویس بازت را نگه داشته‌ایم."
+            : "اینجا برای تو ساخته شده؛ برای روزهای دانشگاه، شوق موسیقی ایرانی و لحظه‌هایی که به خودت هدیه می‌دهی."}
         </p>
         <form onSubmit={submit} className="space-y-4">
           <label className="field">
@@ -111,10 +116,13 @@ export function Login({ expired = false }: { expired?: boolean }) {
             </p>
           )}
           <Button type="submit" disabled={pending || !ready} className="w-full">
-            {pending ? "در حال ورود…" : "ورود به برنامه"}
+            {pending ? "در حال ورود…" : "ورود به فضای خودت"}
             <ArrowLeft size={18} />
           </Button>
         </form>
+        <p className="sarvin-login-signature">
+          برای تو که زندگی را با تار و سه‌تار زیباتر می‌کنی.
+        </p>
       </main>
     </div>
   );

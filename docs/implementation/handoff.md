@@ -198,3 +198,23 @@ SP-PWA-02 is **Done**. SP-PWA-03 remains unchecked: no real Android/iOS installa
 or browser-controlled offline/update test is claimed; browser control remains
 deferred. This supersedes the earlier pending-publication note. Original checklist
 remains 181/210; the separate PWA checklist is 2/3 Done. Desktop mirror unavailable.
+
+
+## Sarvin personal UI — 2026-11-09
+
+**Done (source/build verification):** the user identified Sarvin as the sole intended
+recipient, an industrial-engineering student who loves Iranian music and plays tar
+and setar, and requested affectionate, respectful address. Reworked login, today,
+week, reading, tasks, review, settings, onboarding and empty-state copy around
+«سروین جان» / «سروینِ عزیز». Added shared code-native tar/setar artwork, warm paper/wood
+colors alongside the existing green, dedicated day/week welcome panels and a
+personal sidebar note. Kept the approved logo, Persian/RTL dates, explicit action
+labels and all domain/authentication behavior. Personalization CSS is separate from
+the concurrently edited calendar CSS. The sidebar can scroll on short screens.
+
+Web typecheck, production build, 9 existing web tests, targeted ESLint, formatting
+and diff checks passed. The decorative SVG was rendered to PNG and visually
+inspected; this is not browser/page-layout verification. No browser control was
+used under the existing deferral, so mobile/desktop visual acceptance remains open.
+Concurrent task cancellation, music-category migration/API edits and calendar-grid
+changes are outside this release scope. Original 181/210 checklist unchanged.

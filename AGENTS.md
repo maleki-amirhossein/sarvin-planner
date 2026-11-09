@@ -200,3 +200,14 @@ worker headers. Local build/HTTP checks and 9 web tests passed. PWA commit
 smoke, exact served assets and pre-release session continuity passed. Actual
 device installation remains pending. No domain is required when
 the IP address has trusted HTTPS. Browser control remains deferred.
+
+## Personal UI voice — 2026-11-09
+
+The user explicitly says this app is exclusively for Sarvin, who studies industrial
+engineering, loves Iranian music and plays tar and setar. Address her warmly and
+respectfully as «سروین جان» or «سروینِ عزیز» in welcoming/supportive copy. Keep action
+labels and error/confirmation semantics clear. Use subtle Iranian instrument
+artwork and warm paper/wood tones alongside the existing green; preserve the
+approved logo. Shared art/welcome lives in `sarvin-welcome.tsx`; presentation-only
+styles live in `personalization.css`. Avoid generic productivity pressure, invented
+quotes, fake progress or adding personal schedules without explicit input.

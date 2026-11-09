@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Providers } from "@/components/providers";
 import "./globals.css";
+import "./personalization.css";
 
 export const metadata: Metadata = {
   title: "برنامه‌ریز سروین | Sarvin planner",

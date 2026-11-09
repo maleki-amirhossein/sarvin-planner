@@ -867,3 +867,14 @@ Final completion rule: A core feature is Done only when it works with real data 
 | 2026-11-09 | SP-PWA-01 | **Done (source/local HTTP)** | Installable Persian metadata, icons, settings install guidance and isolated public offline fallback. | Web build/types/lint; 9 tests; PWA HTTP smoke on port 3105; separate Docker API smoke passed. | apps/web/src/lib/pwa.test.ts; scripts/pwa-smoke.mjs; qa-report.md; handoff.md | Host API upstream unavailable; no deployment/device installation claimed. Original 181/210 unchanged; Desktop mirror unavailable. |
 
 | 2026-11-09 | SP-PWA-02 | **Done (public release)** | PWA deployed at the existing trusted HTTPS IP URL, commit `ded2685`, Actions `42589608690`. | CI passed; public PWA/general smoke, asset hashes, production bundles, service health and session continuity passed. | qa-report.md; handoff.md; Actions run 42589608690 | SP-PWA-03 remains open for real-device/browser checks; concurrent source edits excluded. |
+
+
+## Sarvin personal UI follow-up — authorized 2026-11-09
+
+- [x] **SP-PERSONAL-01 — Done (source/build):** affectionate Persian address, personalized day/week/login/sidebar, Iranian tar/setar artwork and warmer styling; types/build/lint/formatting/9 web tests passed. SVG artwork inspected.
+- [ ] **SP-PERSONAL-02 — Pending:** publish and verify the personal UI assets, login copy, PWA and API health through public HTTPS.
+- [ ] **SP-PERSONAL-03 — Pending:** actual browser/mobile/desktop visual and interaction acceptance; browser control remains deferred.
+
+| Date | Task | Status | Implementation | Verification | Evidence | Limits |
+| --- | --- | --- | --- | --- | --- | --- |
+| 2026-11-09 | SP-PERSONAL-01 | **Done (source/build)** | Warm Sarvin-specific Persian copy; shared tar/setar decoration; paper/wood/green welcome/login/sidebar styling. | Web types/build/lint, 9 tests, formatting/diff; SVG inspected. | qa-report.md; handoff.md; sarvin-welcome.tsx; personalization.css | Browser acceptance deferred; concurrent changes excluded; original 181/210 unchanged. |
