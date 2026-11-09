@@ -225,3 +225,33 @@ deferred; Android/iOS standalone installation and browser-managed worker lifecyc
 remain unchecked. Original checklist remains 181/210; this user-requested follow-up
 is tracked separately. Concurrent task/category/calendar edits were preserved.
 Desktop mirror remains unavailable; no moved document was recreated.
+
+
+## PWA public release — 2026-11-09
+
+**Done (deployment and public HTTP acceptance):** PWA commit `ded2685` is live at
+https://87.107.160.160:8443 through successful [Actions run 42589608690](https://github.com/maleki-amirhossein/sarvin-planner/actions/runs/42589608690).
+Release receipt reports `deployed` for sequence 6/1; API, web and PostgreSQL are
+healthy. The existing on-server release backup was created by the deployment
+pipeline. This PWA release contains no database migration or owner provisioning.
+
+The exact committed source was independently checked in an isolated worktree:
+frozen installation, contracts, full lint, web types, 9 web tests and production
+web build passed. Actions then passed the full application/database/auth/domain
+and deployment-boundary verification and built the release images.
+
+Public `scripts/pwa-smoke.mjs` and `pnpm smoke` passed over trusted HTTPS without
+disabling certificate verification. Checks cover manifest/link/theme/Apple metadata,
+all four PNG dimensions, worker JavaScript MIME/no-store headers, Persian offline
+fallback, login/RTL, API/database readiness and anonymous private-route denial.
+SHA-256 comparison verified all six public PWA files match the committed assets;
+served settings bundles contain the install UI and production worker registration.
+An authenticated session established before rollout still worked afterward; its
+Secure/HttpOnly cookie flags were verified, and the temporary verification session
+was logged out and its mode-600 local cookie file removed. No business records
+were created/edited. Concurrent task/category/calendar changes were excluded.
+
+SP-PWA-02 is **Done**. SP-PWA-03 remains unchecked: no real Android/iOS installation
+or browser-controlled offline/update test is claimed; browser control remains
+deferred. This supersedes the earlier pending-publication note. Original checklist
+remains 181/210; the separate PWA checklist is 2/3 Done. Desktop mirror unavailable.

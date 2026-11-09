@@ -195,6 +195,8 @@ install guidance. The production-only service worker caches only the static publ
 an explicit offline-data design. Bump its cache version when changing the fallback.
 Do not force activation/reloads that discard editor drafts. The original logo is
 unchanged. `scripts/pwa-smoke.mjs` checks a built web instance's metadata/assets and
-worker headers. Local production build/HTTP checks and 9 web tests passed; actual
-device installation and public rollout remain pending. No domain is required when
+worker headers. Local build/HTTP checks and 9 web tests passed. PWA commit
+`ded2685` is live via successful Actions run `42589608690`; public PWA/general
+smoke, exact served assets and pre-release session continuity passed. Actual
+device installation remains pending. No domain is required when
 the IP address has trusted HTTPS. Browser control remains deferred.

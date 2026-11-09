@@ -859,9 +859,11 @@ Final completion rule: A core feature is Done only when it works with real data 
 ## PWA follow-up — authorized 2026-11-09 (outside original 210 tasks)
 
 - [x] **SP-PWA-01 — Done (source/local HTTP):** Persian install manifest, standalone metadata, approved-logo installation icons, settings install prompt/manual guidance and public-only offline fallback. Production web build, typecheck, targeted lint, 9 web tests and PWA HTTP smoke passed. See QA/handoff execution evidence.
-- [ ] **SP-PWA-02 — Pending:** publish release and verify PWA assets/headers through public HTTPS.
+- [x] **SP-PWA-02 — Done:** published `ded2685` through successful Actions run `42589608690`; public HTTPS PWA/general smoke, six exact assets, install/registration bundles, healthy services and existing-session continuity passed. See QA/handoff public-release evidence.
 - [ ] **SP-PWA-03 — Pending:** actual Android/iOS installation, standalone launch/login, offline/reconnect and update behavior with an open draft; browser control remains deferred.
 
 | Date | Task | Status | Implementation | Verification | Evidence | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
 | 2026-11-09 | SP-PWA-01 | **Done (source/local HTTP)** | Installable Persian metadata, icons, settings install guidance and isolated public offline fallback. | Web build/types/lint; 9 tests; PWA HTTP smoke on port 3105; separate Docker API smoke passed. | apps/web/src/lib/pwa.test.ts; scripts/pwa-smoke.mjs; qa-report.md; handoff.md | Host API upstream unavailable; no deployment/device installation claimed. Original 181/210 unchanged; Desktop mirror unavailable. |
+
+| 2026-11-09 | SP-PWA-02 | **Done (public release)** | PWA deployed at the existing trusted HTTPS IP URL, commit `ded2685`, Actions `42589608690`. | CI passed; public PWA/general smoke, asset hashes, production bundles, service health and session continuity passed. | qa-report.md; handoff.md; Actions run 42589608690 | SP-PWA-03 remains open for real-device/browser checks; concurrent source edits excluded. |
