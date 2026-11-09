@@ -211,3 +211,7 @@ artwork and warm paper/wood tones alongside the existing green; preserve the
 approved logo. Shared art/welcome lives in `sarvin-welcome.tsx`; presentation-only
 styles live in `personalization.css`. Avoid generic productivity pressure, invented
 quotes, fake progress or adding personal schedules without explicit input.
+
+Personal UI commit `4aae047` is publicly deployed via successful Actions run
+`42593323279`; served-copy/style, API/PWA smoke and session-continuity checks passed.
+Full browser visual acceptance remains deferred.

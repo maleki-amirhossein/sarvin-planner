@@ -218,3 +218,29 @@ inspected; this is not browser/page-layout verification. No browser control was
 used under the existing deferral, so mobile/desktop visual acceptance remains open.
 Concurrent task cancellation, music-category migration/API edits and calendar-grid
 changes are outside this release scope. Original 181/210 checklist unchanged.
+
+
+## Sarvin personal UI public release — 2026-11-09
+
+**Done (deployment/HTTP verification):** commit `4aae047` is live at
+https://87.107.160.160:8443 via successful [Actions run 42593323279](https://github.com/maleki-amirhossein/sarvin-planner/actions/runs/42593323279).
+The receipt records sequence 7/1 as deployed; API/web/database are healthy and the
+pipeline created its pre-release backup. No migration/business-data edit was part
+of this presentation release. Existing login-session continuity passed; the
+temporary verification session was logged out and its cookie file removed.
+
+Exact committed source was checked in an isolated worktree with frozen install,
+full lint, web types/build and local same-origin smoke against the existing Docker
+API. Local/public PWA smoke passed. CI passed the complete application/database/
+auth/domain/deployment tests and built the release images. Public HTTP checks
+confirmed all seven page routes and their referenced assets, Persian/RTL metadata,
+new login/day/week/reading/review wording, instrument/engineering references and
+personalization styles in served bundles. Login content is client-rendered; these
+checks verify delivery, not browser rendering. New text colors have minimum
+contrast ratios 5.00:1, 7.10:1 and 5.18:1 against the selected background colors.
+
+SP-PERSONAL-02 is **Done**. SP-PERSONAL-03 stays unchecked: full browser/mobile/
+desktop visual and interaction acceptance remains deferred by the user. Only the
+standalone decorative SVG was visually inspected. Concurrent category, task-cancel
+and calendar-grid edits were preserved and excluded. Original 181/210 unchanged;
+personal-UI follow-up 2/3 Done. Desktop mirror remains unavailable.

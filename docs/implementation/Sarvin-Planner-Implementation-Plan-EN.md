@@ -872,9 +872,11 @@ Final completion rule: A core feature is Done only when it works with real data 
 ## Sarvin personal UI follow-up — authorized 2026-11-09
 
 - [x] **SP-PERSONAL-01 — Done (source/build):** affectionate Persian address, personalized day/week/login/sidebar, Iranian tar/setar artwork and warmer styling; types/build/lint/formatting/9 web tests passed. SVG artwork inspected.
-- [ ] **SP-PERSONAL-02 — Pending:** publish and verify the personal UI assets, login copy, PWA and API health through public HTTPS.
+- [x] **SP-PERSONAL-02 — Done:** `4aae047` deployed via successful Actions `42593323279`; public page/asset delivery, personalized copy/styles, API/PWA smoke and existing-session continuity passed. See QA/handoff evidence.
 - [ ] **SP-PERSONAL-03 — Pending:** actual browser/mobile/desktop visual and interaction acceptance; browser control remains deferred.
 
 | Date | Task | Status | Implementation | Verification | Evidence | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
 | 2026-11-09 | SP-PERSONAL-01 | **Done (source/build)** | Warm Sarvin-specific Persian copy; shared tar/setar decoration; paper/wood/green welcome/login/sidebar styling. | Web types/build/lint, 9 tests, formatting/diff; SVG inspected. | qa-report.md; handoff.md; sarvin-welcome.tsx; personalization.css | Browser acceptance deferred; concurrent changes excluded; original 181/210 unchanged. |
+
+| 2026-11-09 | SP-PERSONAL-02 | **Done (public release)** | Personalized UI deployed at existing HTTPS IP, commit `4aae047`, Actions `42593323279`. | CI and public copy/style/PWA/API smoke; service health and session continuity passed. | qa-report.md; handoff.md; Actions run 42593323279 | Browser visual acceptance SP-PERSONAL-03 remains open; unrelated changes excluded. |
