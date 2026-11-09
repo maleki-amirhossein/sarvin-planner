@@ -169,3 +169,20 @@ GitHub build/tests stay hosted. The dedicated SSH key accepts loopback only.
 First complete Actions deployment 42582507446, public smoke and owner-session
 continuity passed. Runner maintenance and artifact retry behavior are documented
 in the CI/CD runbook; production failure injection was not performed.
+
+## Public server schedule update — 2026-11-09
+
+User confirmed university/work changes effective today, 2026-11-09, and requested
+the three music schedules on the server too. Public server work is now
+Saturday–Tuesday 08:00–13:00; Wednesday work is removed. Tuesday work has priority,
+so Simulation is not registered. Wednesday 13:30 uses Human Factors, not Decision
+Making. Five university and three music fixed weekly series are persisted with no
+end date (none supplied); exact titles/times are in the handoff. Authenticated
+three-week readback verified 24 class and 12 work occurrences, no duplicates or
+overlaps. Local Docker data is separate and unchanged. Do not re-create these
+server rules; inspect existing records before future edits.
+
+Login icon/text and calendar card border refinements were deployed in `bbfb887`
+through successful Actions run 42586421851. Public smoke, served assets, session
+continuity and post-deployment class/work schedule readback passed. Concurrent
+uncommitted calendar day-background styling was not part of that release.

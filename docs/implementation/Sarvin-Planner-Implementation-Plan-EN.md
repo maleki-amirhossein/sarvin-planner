@@ -830,6 +830,12 @@ Completed tasks below have actual verification evidence. The repository copy is 
 
 | 2026-11-09 | Calendar card border follow-up | **Done (source change)** | Removed the right-side accent border from shared calendar event cards. | CSS formatting and diff checks passed; browser verification deferred. | apps/web/src/app/globals.css; qa-report.md; handoff.md | Not deployed; original 181/210 checklist unchanged. |
 
+| 2026-11-09 | Public university/music schedule follow-up | **Done (API persistence)** | Applied five university and three music weekly fixed series from user-confirmed 2026-11-09; removed Wednesday work; retained Tuesday work in preference to Simulation; selected Human Factors instead of Decision Making. No end date supplied. | Authenticated readback: 8 unique class rules, 24 class and 12 work occurrences over three weeks, exact Tehran times/dates, no overlaps, no Wednesday work; sessions logged out. | docs/implementation/qa-report.md; handoff.md; private ignored operation receipt | Original 181/210 checklist unchanged; browser acceptance remains open. |
+
+| 2026-11-09 | Calendar day background follow-up | **Done (source change)** | Set all day headers and time-grid lanes, including today, to solid white. | CSS formatting and diff checks passed; browser verification deferred. | apps/web/src/app/globals.css; qa-report.md; handoff.md | Not deployed; original 181/210 checklist unchanged; Desktop mirror remains unavailable. |
+
+| 2026-11-09 | Login/calendar UI server release | **Done** | Published login icon/text adjustments and calendar card border removal in bbfb887. | Actions run 42586421851 passed; host deployed receipt, private pre-release backup, public HTTPS smoke, served JS/CSS, existing-session continuity and post-deployment eight-class readback passed. | docs/implementation/qa-report.md; handoff.md | Concurrent day-background edit not included; browser acceptance deferred. |
+
 ## 12. Handoff Status
 
 ```text

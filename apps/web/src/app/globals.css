@@ -337,8 +337,9 @@ progress::-moz-progress-bar {
   border-style: solid;
   border-color: #e9eae6;
 }
-.sarvin-today {
-  background: linear-gradient(180deg, #eef8f1b3, #e8f6f080);
+.calendar-grid .sarvin-day-heading,
+.calendar-grid .sarvin-day-lane {
+  background: #fff;
 }
 .calendar-day-button {
   display: flex;

@@ -185,3 +185,15 @@ Moved the password visibility button to logical `start` (right in the RTL form),
 ## Calendar card border adjustment — 2026-11-09
 
 Removed the shared calendar event's 4px inline-start accent border (right side in RTL), retaining `border: 0`. CSS formatting and diff checks passed. Browser verification remains deferred; changes are local, not deployed.
+
+## Server university/music schedules — 2026-11-09
+
+At the user's request, applied real schedules to the public echoa instance through authenticated NestJS APIs, using CSRF, version preconditions and stable idempotency keys. User confirmed effective date today (2026-11-09), selected Human Factors instead of Decision Making for Wednesday 13:30, and prioritized Tuesday work over Simulation. No term end was supplied; weekly rules have no end date, as communicated. Removed Wednesday from work via `scope=future`; Saturday–Tuesday work remains 08:00–13:00. Added five university and three explicitly requested music series; exact table is in the handoff. No local database copy, fixtures, owner reset or direct SQL writes.
+
+Authenticated readback verified one rule per title, all eight class series, 24 class occurrences and 12 work occurrences across three weeks, exact Tehran weekdays/times, fixed-event restrictions, no occurrences before the effective date, no overlaps, no Wednesday work, and no Simulation/Decision Making rules. Verification sessions logged out. Private operation receipt and stable keys remain ignored/mode 600 in `.local/university-20261109-receipt.json`. Original 181/210 checklist and browser acceptance remain unchanged.
+
+UI deployment: [Actions run 42586421851](https://github.com/maleki-amirhossein/sarvin-planner/actions/runs/42586421851) succeeded for `bbfb887`, release `ci-bbfb887430f2c50291c3f9d91841217ca1b8d31f-4-1`; host receipt confirms deployed with a private pre-release backup. This publishes the earlier login and calendar-card-border changes. Public HTTPS smoke and served JS/CSS checks confirmed the right-side password toggle, removed login sentence and removed calendar event accent border. A pre-deployment owner session survived; task data was unchanged and logout succeeded. All eight class schedules and Tuesday/Wednesday work decisions were reverified after deployment. No browser visual acceptance claimed. Concurrent uncommitted day-background styling is outside this release.
+
+## Calendar day backgrounds — 2026-11-09
+
+**Done (source change):** set shared calendar day headers and time-grid lanes to solid white, including today, replacing the green today gradient. The date badge and event colors remain available for identification. CSS formatting and diff checks passed. Browser control remains deferred; no visual verification or deployment claimed. Original checklist remains 181/210.

@@ -117,3 +117,26 @@ installation. No additional account provisioning is necessary.
 ## Calendar card border adjustment — 2026-11-09
 
 **Done (source change):** removed the right-side accent border from shared calendar event cards. CSS formatting and diff checks passed. Changes remain local; browser verification and deployment are not claimed. Original checklist count remains 181/210.
+
+## Current public-server schedule — 2026-11-09
+
+**Done (real API persistence):** user confirmed changes from today, 2026-11-09. Work is now Saturday–Tuesday 08:00–13:00; Wednesday work is removed from this date forward. Tuesday work takes priority, so Simulation 08:00–10:30 was not registered. Human Factors was selected instead of Decision Making for Wednesday 13:30–16:00. The following eight fixed class series are weekly from 2026-11-09, without a term end (none supplied):
+
+| Class | Day | Tehran time |
+|---|---|---|
+| طرح‌ریزی واحدهای صنعتی | Sunday | 13:30–16:00 |
+| دانش خانواده و جمعیت | Tuesday | 13:30–15:10 |
+| برنامه‌ریزی و مدیریت پروژه | Wednesday | 08:00–10:30 |
+| سیستم‌های اطلاعات مدیریت | Wednesday | 10:30–12:00 |
+| مهندسی عوامل انسانی | Wednesday | 13:30–16:00 |
+| کلاس موسیقی | Monday | 17:30–18:40 |
+| گروه‌نوازی | Thursday | 13:10–15:00 |
+| کارگاه موسیقی | Saturday | 18:30–22:30 |
+
+All were created on the public server through authenticated domain APIs, not transferred from the local database. Three-week readback verified 24 class and 12 work occurrences, fixed restrictions, correct dates/times, no duplicates/overlaps and no Wednesday work. See QA for evidence. Existing local schedules are separate and unchanged; original 181/210 acceptance checklist remains unchanged.
+
+**Done (UI deployment):** login refinements and calendar card border removal are live in `bbfb887`, successful [run 42586421851](https://github.com/maleki-amirhossein/sarvin-planner/actions/runs/42586421851). HTTPS smoke, served assets, pre-existing session continuity and post-deployment schedule readback passed. This supersedes the earlier local-only status for those two changes. Concurrent calendar day-background edits remain outside this release.
+
+## Calendar day backgrounds — 2026-11-09
+
+**Done (source change):** set shared calendar day headers and time-grid lanes to solid white, including today, replacing the green today gradient. The date badge and event colors remain available for identification. CSS formatting and diff checks passed. Browser control remains deferred; no visual verification or deployment claimed. Original checklist remains 181/210.
