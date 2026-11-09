@@ -423,7 +423,7 @@ Minimum proposed model: names may follow the existing structure, but preserve th
 - [x] **SP-14-07** — **Done** — Show class conflicts with work/other classes, including titles and times. Offer an informed decision instead of automatic resolution.
 - [x] **SP-14-08** — **Done** — Show an empty state when actual class data is absent. Keep its pending-input record open and keep sample class data out of production.
 - [ ] **SP-14-GATE** — Exit criteria: Fixed-schedule management is verified with test fixtures, and the actual work schedule is correct. This Gate does not depend on receiving real classes.
-- [ ] **SP-14-INPUT** — **Awaiting the user:** Once real course details arrive, enter them, verify weekdays/times/term/parity against the supplied information, and report existing conflicts. Do not mark this task Done before receiving the data; continue independent steps.
+- [x] **SP-14-INPUT** — **Done** — Entered the three user-supplied weekly music commitments through the authenticated API. Verified weekdays, Tehran times, fixed-event restrictions and recurrence from the confirmed 2026-11-09 start with no end date; no conflicts returned. See 2026-11-09 execution log and QA evidence.
 
 ## STEP-15 — Reading Page
 
@@ -484,14 +484,14 @@ Save real evidence for each item. Write tests that verify behavior and likely fa
 
 ## STEP-19 — Prepare and Deploy to the Personal Server
 
-The domain and server details have not yet been supplied. Prepare files independently; actual dependent operations must wait for valid information. Possession of this checklist does not imply access to the server.
+The user supplied `ssh echoa` on 2026-11-09 and chose no domain and a fresh database. Private SSH-tunnel deployment is verified; real-domain HTTPS and scheduled off-server backup inputs/acceptance remain pending.
 
 - [ ] **SP-19-01** — Obtain the necessary information and record it without secrets: OS/architecture, resources, access method, existing services, domain, and backup destination.
 - [x] **SP-19-02** — **Done** — Prepare production multi-stage Dockerfiles with non-root users for web/API, health checks, and proper shutdown. Do not run development servers in production.
 - [x] **SP-19-03** — **Done** — Prepare production Compose with web/api/db/proxy services, internal networking, persistent PostgreSQL and Caddy volumes, restart policies, and health dependencies.
 - [ ] **SP-19-04** — Configure Caddy for the real domain: route `/api` and `/api/*` to Nest and other paths to Next. Preserve or strip the prefix consistently with Nest routes.
-- [ ] **SP-19-05** — Publish only necessary public ports. PostgreSQL and direct web/API ports must not be public. Do not replace existing server configuration without inspection.
-- [ ] **SP-19-06** — Configure production environment variables, secrets, trust proxy, allowed origin, HTTPS, and secure cookies. Exclude development credentials and demo seeds from production.
+- [x] **SP-19-05** — **Done** — Inspected existing Nginx/Echoa services and preserved them. Published only server loopback 127.0.0.1:18080 for SSH forwarding; database/API/web remain unexposed. Verified resolved/runtime port bindings, public port non-reachability and unchanged existing container IDs. See 2026-11-09 deployment evidence.
+- [x] **SP-19-06** — **Done** — Public IP HTTPS at https://87.107.160.160:8443 uses the existing trusted certificate, exact allowed origin, validated Nginx/Caddy proxy chain, Secure host-only cookies and independent random server secrets. Local HTTP mode disabled; no demo seeds. Public login/CSRF/session checks passed; see 2026-11-09 QA evidence.
 - [x] **SP-19-07** — **Done** — Document deployment covering build, backup, controlled migrations, startup, and smoke tests. Do not run migrations concurrently across replicas.
 - [ ] **SP-19-08** — Bootstrap the owner securely. Verify login, logout, API access, calendar operation, and reading persistence over real HTTPS.
 - [ ] **SP-19-09** — Configure scheduled database backups to a destination separate from the server, retention, and access protection. Actually test restoration into a temporary database.
@@ -563,14 +563,14 @@ This table checks coverage. Record actual execution status in the tasks with che
 
 | ID | Input | Initial status | Dependency |
 |---|---|---|---|
-| INPUT-01 | Course names, weekdays, start/end times, weekly/alternating-week pattern | User will supply later | SP-14-INPUT |
-| INPUT-02 | Term start/end and odd/even reference where needed | Not received | Actual class entry |
-| INPUT-03 | Work-schedule start date; weekdays and times are already confirmed | Set during onboarding | Actual work bootstrap |
+| INPUT-01 | Course names, weekdays, start/end times, weekly/alternating-week pattern | Received and saved 2026-11-09: کلاس موسیقی Monday 17:30–18:40; گروه‌نوازی Thursday 13:10–15:00; کارگاه موسیقی Saturday 18:30–22:30; every week, Asia/Tehran | SP-14-INPUT — Done |
+| INPUT-02 | Term start/end and odd/even reference where needed | User confirmed 1405-08-18 / 2026-11-09 onward, no end date; weekly, so no parity anchor needed | Actual class entry — Done |
+| INPUT-03 | Work-schedule start date; weekdays and times are already confirmed | Existing API record observed: 2026-11-09, Saturday–Wednesday 08:00–13:00; unchanged by music entry | Actual work acceptance remains under SP-14-GATE |
 | INPUT-04 | Actual reading target and its unit | Set within the product | Actual goal; absence does not block use |
-| INPUT-05 | Server details/access, resources, and existing services | User will supply later | Real deployment |
-| INPUT-06 | Domain and DNS | To be supplied later | Public HTTPS |
+| INPUT-05 | Server details/access, resources, and existing services | Received and inspected 2026-11-09: echoa, Ubuntu 24.04 amd64, 3.8 GiB RAM; existing Nginx/Echoa preserved. Private instance deployed. | Real deployment |
+| INPUT-06 | Domain and DNS | No custom domain for now; public HTTPS via the server IP on 8443 is configured and verified | Real-domain routing deferred; IP TLS active |
 | INPUT-07 | Owner login email/name and password through a secure channel | Owner provisioned locally on 2026-11-09; generated password in ignored private file; login verified | Account bootstrap |
-| INPUT-08 | Backup destination separate from the server and retention policy | Not received | Production backups |
+| INPUT-08 | Backup destination separate from the server and retention policy | Daily on-server backup and one downloaded/restored private client copy verified; automated off-server destination/retention not received | Production backups |
 | INPUT-09 | Remaining native-browser acceptance access | User requested continuing without browser control for now | Final drag/keyboard/mobile/screenshot acceptance |
 
 Suggested format for class information:
@@ -816,17 +816,24 @@ Completed tasks below have actual verification evidence. The repository copy is 
 | 2026-11-08 | SP-20-04 / SP-20-GATE | In progress | Wrote handoff report with actual test evidence, checkpoint captures, 178/210 status and all remaining groups. | Final captures and overall acceptance remain deferred; no complete-project claim. | docs/implementation/handoff.md | Complete remaining acceptance and input-dependent work. |
 
 | 2026-11-09 | Owner bootstrap follow-up | Done (local account only) | Created requested owner through existing masked CLI with a generated password saved only in an ignored mode-600 local file. | Existing-owner check found zero; real local login, authenticated session and logout passed. | apps/api/src/setup/owner.ts; docs/implementation/qa-report.md | Work date/classes and real HTTPS deployment remain pending; SP-14/19 Gates stay open. |
+| 2026-11-09 | SP-14-INPUT | Done | Saved کلاس موسیقی Monday 17:30–18:40, گروه‌نوازی Thursday 13:10–15:00 and کارگاه موسیقی Saturday 18:30–22:30 as fixed weekly class series, Asia/Tehran. User explicitly confirmed start 2026-11-09 and no end date. | Healthy Docker API; authenticated CSRF-protected preview/create/list/schedule requests. Nine occurrences across three weeks matched dates/times; no pre-start events, duplicate rules or conflicts; drag/resize/completion disabled. Logged out verification session. | docs/implementation/qa-report.md; local owner database; no source changes or commit | SP-14-GATE and browser/server acceptance remain open. |
+
+| 2026-11-09 | Dashboard reference styling follow-up | Implemented; browser acceptance deferred | Refreshed weekly banner, summary pills, navigation, calendar, reading/priorities surfaces and responsive detail layout using the supplied image. Counts and progress use real APIs; original logo and existing scheduling handlers preserved. | Host/Docker web production builds, final web typecheck, repository lint, five date tests, diff check, healthy Docker web, Caddy HTTP smoke and served dashboard asset check passed. No browser visual verification claimed. | apps/web/src/components; apps/web/src/app/globals.css; docs/implementation/qa-report.md | Remaining visual/interaction Gates stay unchecked; checklist remains 179/210. |
+
+| 2026-11-09 | SP-19-05 / private echoa deployment | Done (port isolation); other deployment items partial | Built/transferred amd64 release 20261109-101631-c81a785606b2; fresh database, four migrations, masked new server owner, loopback proxy and SSH tunnel; preserved Nginx/Echoa. | Config rejects unsafe binding/origins; image/source integrity, health/smoke, login/logout/CSRF, empty data and session survival across container/database restart passed. Daily local backup ran; downloaded backup restored in disposable local DB. | compose.tunnel.yaml; scripts/ops/check-tunnel.mjs; deployment.md; qa-report.md | Domain/HTTPS, reboot/browser acceptance, automated off-server retention/notifications remain open. |
+
+| 2026-11-09 | SP-19-06 / public access | Done | Promoted the existing server instance to IP HTTPS on host Nginx 8443, preserving account/data and existing vhosts. Exact HTTPS origin, Secure cookies, trusted host gateway and loopback upstream isolation enforced. | Public TLS/smoke/login/private reads/CSRF, forwarding sanitization, API restart/session and logout passed. Config validator rejected insecure cookie, HTTP origin and public upstream bindings; backup rerun succeeded. | compose.public-proxy.yaml; infra/nginx/sarvin-echoa.conf; infra/caddy/Caddyfile.nginx; scripts/ops/check-public-proxy.mjs; qa-report.md | Custom domain, automated off-server retention/notifications and remaining browser/reboot checks stay open. |
 
 ## 12. Handoff Status
 
 ```text
 Completed whole steps: STEP-00, STEP-01, STEP-02, STEP-03, STEP-04, STEP-05, STEP-06, STEP-07, STEP-08, STEP-09, STEP-10, STEP-15
 Current work: Features implemented; final browser acceptance deferred by user on 2026-11-08
-Done tasks / total: 178 / 210 (includes Gate tasks)
-Remaining tasks: 32; see docs/implementation/handoff.md for grouped next actions
-Owner: Account provisioned on 2026-11-09 through masked CLI; local login/logout verified. Work effective-date confirmation remains pending. No demo content created.
-Class-information status: Features implemented; actual class entry pending. SP-14-INPUT remains unchecked.
-Server/domain status: Deferred by user; real HTTPS and off-server backup acceptance remain unchecked.
+Done tasks / total: 181 / 210 (includes Gate tasks)
+Remaining tasks: 29; see docs/implementation/handoff.md for grouped next actions
+Owner: Account provisioned on 2026-11-09 through masked CLI; local login/logout verified. Existing work rule observed from 2026-11-09; work acceptance Gate remains open. No demo content created.
+Class-information status: Three real music schedules saved and API-verified, weekly from 2026-11-09 without an end date. SP-14-INPUT is Done.
+Server/domain status: echoa is public at https://87.107.160.160:8443 using a trusted IP certificate and Secure cookies. No custom domain requested. Automated off-server backup, remaining browser/reboot/monitoring acceptance stay open.
 Browser status: Chromium responsive/expiry/offline-save/timezone/class checks and Safari login/task/agenda smoke recorded. User asked to continue without browser control; remaining drag/keyboard/mobile/final-capture checks stay open.
 Latest verification: Locked install; builds/types/lint; 12 unit tests; auth HTTP/HTTPS-proxy; task/series/concurrency/reading HTTP suites; fresh/repeat migrations; local populated restore and production config validation.
 QA report: docs/implementation/qa-report.md; screenshots in artifacts/qa

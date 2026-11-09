@@ -24,6 +24,7 @@ import { ActionMenu } from "./ui/overlays";
 import { JalaliDatePicker } from "./jalali-date-picker";
 import { FormFeedback, units, useFormAction } from "./form-support";
 import { QueryState } from "./query-state";
+import { BotanicalArt } from "./botanical-art";
 const navigation = [
   { href: "/today", label: "امروز", icon: House },
   { href: "/week", label: "هفته", icon: CalendarDays },
@@ -77,7 +78,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
             key={href}
             href={href}
             aria-current={path === href ? "page" : undefined}
-            className={`flex min-h-12 items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium ${mobile ? "flex-col gap-1 px-1 text-xs" : ""} ${path === href ? "bg-secondary text-primary" : "text-muted-foreground hover:bg-muted"}`}
+            className={`shell-nav-link flex min-h-12 items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium ${mobile ? "flex-col gap-1 px-1 text-xs" : ""} ${path === href ? "bg-secondary text-primary" : "text-muted-foreground hover:bg-muted"}`}
           >
             <Icon size={mobile ? 21 : 20} />
             {label}
@@ -93,7 +94,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
       >
         رفتن به محتوای اصلی
       </a>
-      <aside className="fixed inset-y-0 start-0 z-20 hidden w-52 border-e bg-card p-5 lg:flex lg:flex-col">
+      <aside className="shell-sidebar fixed inset-y-0 start-0 z-20 hidden w-52 border-e p-5 lg:flex lg:flex-col">
         <Link href="/today" className="mb-10 mt-2 flex items-center gap-2">
           <Image src="/sarvin-planner-logo.png" alt="" width={44} height={44} />
           <span className="text-xl font-bold">
@@ -107,14 +108,16 @@ function ShellContent({ children }: { children: React.ReactNode }) {
           </span>
         </Link>
         {nav()}
-        <div className="mt-auto rounded-xl bg-secondary/60 p-4 text-xs leading-7 text-primary">
-          هر روز، یک قدم کوچک.
-          <br />
-          برای کارهای مهم و زمانی برای خودت.
+        <div className="sidebar-note mt-auto text-center text-primary">
+          <BotanicalArt className="sidebar-sprig" />
+          <p className="text-lg font-bold leading-8">هر روز، یک قدم کوچک</p>
+          <span className="note-underline" aria-hidden="true" />
         </div>
       </aside>
-      <div className="lg:ms-52">
-        <header className="flex min-h-20 items-center justify-between gap-3 border-b bg-card px-4 sm:px-7">
+      <div
+        className={`shell-content relative lg:ms-52 ${path === "/week" && settings.data?.onboardingComplete ? "shell-week" : ""}`}
+      >
+        <header className="shell-header flex min-h-20 items-center justify-between gap-3 px-4 sm:px-7">
           <Link href="/today" className="flex items-center gap-2 lg:hidden">
             <Image
               src="/sarvin-planner-logo.png"
@@ -124,7 +127,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
             />
             <strong>سروین</strong>
           </Link>
-          <p className="hidden text-sm text-muted-foreground lg:block">
+          <p className="shell-caption hidden text-sm text-muted-foreground lg:block">
             برنامه‌ریز شخصی تو
           </p>
           <div className="flex items-center gap-2">
@@ -156,7 +159,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
         <main
           id="main"
           tabIndex={-1}
-          className="mx-auto max-w-[1800px] px-4 py-6 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-7 lg:pb-8"
+          className="shell-main mx-auto max-w-[1800px] px-4 py-6 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:px-7 lg:pb-8"
         >
           {settings.data && !settings.data.onboardingComplete ? (
             <Onboarding />

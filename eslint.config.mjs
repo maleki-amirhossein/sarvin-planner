@@ -4,7 +4,7 @@ import tseslint from "typescript-eslint";
 import nextVitals from "eslint-config-next/core-web-vitals";
 
 export default defineConfig([
-  globalIgnores(["**/node_modules/**", "**/.next/**", "**/dist/**", "**/coverage/**", "apps/api/src/generated/**", "**/next-env.d.ts"]),
+  globalIgnores([".local/**", "**/node_modules/**", "**/.next/**", "**/dist/**", "**/coverage/**", "apps/api/src/generated/**", "**/next-env.d.ts"]),
   js.configs.recommended,
   ...tseslint.configs.recommended,
   ...nextVitals.map((config) => ({ ...config, files: ["apps/web/**/*.{js,mjs,ts,tsx}"] })),

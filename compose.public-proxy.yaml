@@ -1,0 +1,13 @@
+# Apply after compose.yaml + compose.tunnel.yaml when the existing host Nginx
+# terminates public TLS. Caddy stays loopback-only; localhost HTTP login is disabled.
+services:
+  api:
+    environment:
+      COOKIE_SECURE: "true"
+      ALLOW_INSECURE_LOCAL_HTTP: "false"
+      APP_ORIGINS: ${PUBLIC_APP_ORIGIN:?Set the exact public HTTPS origin}
+  caddy:
+    environment:
+      HOST_PROXY_IP: ${HOST_PROXY_IP:?Set the Docker edge network host gateway}
+    volumes:
+      - ${PUBLIC_CADDYFILE:-./infra/caddy/Caddyfile.nginx}:/etc/caddy/Caddyfile:ro

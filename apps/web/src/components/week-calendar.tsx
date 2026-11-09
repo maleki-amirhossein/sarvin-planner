@@ -55,8 +55,10 @@ export function WeekCalendar({
         height={720}
         slotMinTime="00:00:00"
         slotMaxTime="24:00:00"
-        scrollTime="07:00:00"
+        scrollTime="08:00:00"
         slotDuration="00:30:00"
+        slotMinHeight={32}
+        slotHeaderInterval="01:00:00"
         snapDuration="00:15:00"
         nowIndicator
         editable
@@ -69,27 +71,48 @@ export function WeekCalendar({
         eventClick={onEventClick}
         eventDrop={onMove}
         eventResize={onResize}
+        dayHeaderClass={(info) =>
+          `sarvin-day-heading ${info.isToday ? "sarvin-today" : ""}`
+        }
+        dayHeaderInnerClass="sarvin-day-heading-inner"
+        dayLaneClass={(info) =>
+          `sarvin-day-lane ${info.isToday ? "sarvin-today" : ""}`
+        }
+        columnEventClass="sarvin-calendar-event"
         dayHeaderContent={(info) => (
           <button
             type="button"
-            className="w-full px-1 py-2"
+            className="calendar-day-button"
+            aria-pressed={localDate(info.date) === date}
+            aria-label={formatJalaliDate(info.date)}
             onClick={() => onDayClick?.(localDate(info.date))}
           >
             <span className="block text-sm">
               {formatJalaliDate(info.date, "EEEE")}
             </span>
-            <strong className="block text-lg">
+            <strong
+              className={`calendar-day-date ${info.isToday ? "calendar-day-current" : ""}`}
+            >
               {formatJalaliDate(info.date, "d MMMM")}
             </strong>
+            {info.isToday && (
+              <span className="calendar-today-label">امروز</span>
+            )}
           </button>
         )}
         eventContent={(info) => (
-          <div className="min-w-0 overflow-hidden p-1 text-xs">
-            <div className="flex items-center gap-1 font-semibold">
-              {info.event.extendedProps.fixed && <LockKeyhole size={12} />}
+          <div className="calendar-event-content min-w-0 overflow-hidden text-xs">
+            <div className="flex items-center justify-between gap-1 font-semibold">
               <span className="truncate">{info.event.title}</span>
+              {info.event.extendedProps.fixed && (
+                <LockKeyhole
+                  size={13}
+                  className="shrink-0"
+                  aria-label="برنامه ثابت"
+                />
+              )}
             </div>
-            <bdi dir="ltr">
+            <bdi dir="ltr" className="mt-1 block text-[11px]">
               {info.event.start && formatTime(info.event.start)}–
               {info.event.end && formatTime(info.event.end)}
             </bdi>

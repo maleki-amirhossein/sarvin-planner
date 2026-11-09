@@ -1,0 +1,36 @@
+# Private remote access without a domain:
+# docker compose --env-file .env.tunnel -f compose.yaml -f compose.tunnel.yaml up -d
+# ssh -N -L 127.0.0.1:18080:127.0.0.1:18080 echoa
+# Open http://localhost:18080. Do not publish this HTTP endpoint on a public interface.
+services:
+  db:
+    ports: !reset []
+    mem_limit: 512m
+    cpus: 1.0
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set a unique database password}
+  migrate:
+    mem_limit: 512m
+    cpus: 1.0
+  api:
+    mem_limit: 512m
+    cpus: 1.0
+    environment:
+      COOKIE_SECURE: "false"
+      ALLOW_INSECURE_LOCAL_HTTP: "true"
+      APP_ORIGINS: http://localhost:18080,http://127.0.0.1:18080
+      SESSION_SECRET: ${SESSION_SECRET:?Set a random session secret}
+  web:
+    mem_limit: 384m
+    cpus: 1.0
+  caddy:
+    mem_limit: 96m
+    cpus: 0.5
+    environment:
+      CADDY_SITE_ADDRESS: ":80"
+    ports: !override
+      - "127.0.0.1:18080:80"
+
+networks:
+  database:
+    internal: true

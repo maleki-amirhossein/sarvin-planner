@@ -1,0 +1,18 @@
+{
+	servers {
+		# Only the host Nginx gateway may supply trusted forwarding headers.
+		trusted_proxies static {$HOST_PROXY_IP}
+		trusted_proxies_strict
+	}
+}
+
+:80 {
+	encode zstd gzip
+	@api path /api /api/*
+	handle @api {
+		reverse_proxy api:3001
+	}
+	handle {
+		reverse_proxy web:3000
+	}
+}

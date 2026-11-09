@@ -32,6 +32,7 @@ import {
   useFormAction,
 } from "./form-support";
 import { QueryState } from "./query-state";
+import { ReadingArt } from "./botanical-art";
 export const number = (v: number) =>
   v.toLocaleString("fa-IR", { maximumFractionDigits: 1 });
 export function DateBar({
@@ -41,7 +42,7 @@ export function DateBar({
   title: string;
   weekly?: boolean;
 }) {
-  const { date, week, setDate } = useSelectedDate();
+  const { date, week } = useSelectedDate();
   return (
     <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
       <div>
@@ -52,39 +53,43 @@ export function DateBar({
             : formatJalaliDate(fromLocalDate(date))}
         </p>
       </div>
-      <div className="flex flex-wrap items-center gap-1">
-        <Button
-          variant="outline"
-          size="icon"
-          aria-label={weekly ? "هفته قبل" : "روز قبل"}
-          onClick={() => setDate(shiftDate(date, weekly ? -7 : -1))}
-        >
-          <ChevronRight size={18} />
-        </Button>
-        <Button
-          variant="outline"
-          onClick={() => setDate(localDate(new Date()))}
-        >
-          {weekly ? "این هفته" : "امروز"}
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          aria-label={weekly ? "هفته بعد" : "روز بعد"}
-          onClick={() => setDate(shiftDate(date, weekly ? 7 : 1))}
-        >
-          <ChevronLeft size={18} />
-        </Button>
-        <JalaliDatePicker value={date} onChange={setDate} />
-      </div>
+      <DateNavigation weekly={weekly} />
     </div>
   );
 }
+export function DateNavigation({ weekly = true }: { weekly?: boolean }) {
+  const { date, setDate } = useSelectedDate();
+  return (
+    <div className="flex flex-wrap items-center gap-1">
+      <Button
+        variant="outline"
+        size="icon"
+        aria-label={weekly ? "هفته قبل" : "روز قبل"}
+        onClick={() => setDate(shiftDate(date, weekly ? -7 : -1))}
+      >
+        <ChevronRight size={18} />
+      </Button>
+      <Button variant="outline" onClick={() => setDate(localDate(new Date()))}>
+        {weekly ? "این هفته" : "امروز"}
+      </Button>
+      <Button
+        variant="outline"
+        size="icon"
+        aria-label={weekly ? "هفته بعد" : "روز بعد"}
+        onClick={() => setDate(shiftDate(date, weekly ? 7 : 1))}
+      >
+        <ChevronLeft size={18} />
+      </Button>
+      <JalaliDatePicker value={date} onChange={setDate} />
+    </div>
+  );
+}
+
 export function GoalCard({ week }: { week: string }) {
   const goal = useApi("getWeeklyGoal", { path: { weekStart: week } }),
     editor = useEditor();
   return (
-    <section className="surface space-y-4 p-5">
+    <section className="surface reading-goal space-y-4 p-5">
       <div className="flex items-center gap-2">
         <BookOpen className="text-reading-foreground" size={21} />
         <h2>مطالعه این هفته</h2>
@@ -120,14 +125,30 @@ export function GoalCard({ week }: { week: string }) {
               </p>
             </>
           ) : (
-            <p className="text-sm leading-7 text-muted-foreground">
-              هنوز هدفی برای این هفته مشخص نشده است. با یک هدف کوچک شروع کنید.
-            </p>
+            <>
+              <ReadingArt />
+              <p className="text-center text-sm leading-7 text-muted-foreground">
+                با یک هدف کوچک شروع کن.
+              </p>
+            </>
           )}
           <div className="flex flex-wrap gap-2">
-            <Button onClick={() => editor.reading()}>ثبت مطالعه</Button>
-            <Button variant="outline" onClick={() => editor.goal(goal.data)}>
-              {goal.data.target ? "ویرایش هدف" : "تعیین هدف"}
+            <Button
+              className="flex-1"
+              onClick={() =>
+                goal.data.target ? editor.reading() : editor.goal(goal.data)
+              }
+            >
+              {goal.data.target ? "ثبت مطالعه" : "تعیین هدف"}
+            </Button>
+            <Button
+              variant="ghost"
+              className="flex-1"
+              onClick={() =>
+                goal.data.target ? editor.goal(goal.data) : editor.reading()
+              }
+            >
+              {goal.data.target ? "ویرایش هدف" : "ثبت مطالعه"}
             </Button>
           </div>
         </>

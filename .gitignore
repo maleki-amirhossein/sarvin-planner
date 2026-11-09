@@ -11,4 +11,5 @@ apps/api/src/generated/
 *.log
 
 !.env.production.example
+!.env.tunnel.example
 .local/

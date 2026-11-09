@@ -1,6 +1,42 @@
 # Personal-server deployment
 
-Preparation is implemented. No server, domain, or off-server destination has been supplied; **nothing has been deployed to a real domain**. Local HTTP works at http://localhost:8080. Do not point production at the local database or use test fixtures there.
+Current access is **https://87.107.160.160:8443** on `echoa`. At the user’s request on 2026-11-09, the initial private deployment was promoted to public HTTPS without purchasing/configuring a domain. The existing valid IP certificate is terminated by a dedicated host Nginx listener. The same server database, account and password are preserved. Scheduled off-server backup/retention and remaining acceptance checks are still pending; see the QA report. Never point the server at the local owner database or seed production fixtures.
+
+## Current public IP HTTPS topology
+
+`Internet → host Nginx :8443 (TLS) → Caddy 127.0.0.1:18080 → private Nest/Next containers`. The existing Nginx virtual hosts on ports 80/443 are unchanged. `infra/nginx/sarvin-echoa.conf` uses the existing Let's Encrypt IP certificate `/etc/letsencrypt/live/echoa-api-ip/fullchain.pem`; its private key remains host-only. The existing certbot timer and Nginx deploy hook manage renewal. IP certificates are short-lived; monitor renewal failures and expiry. See [Let's Encrypt IP certificate availability](https://letsencrypt.org/2026/01/15/6day-and-ip-general-availability).
+
+Apply `compose.public-proxy.yaml` **after** the base and tunnel overrides. It requires `PUBLIC_APP_ORIGIN=https://87.107.160.160:8443`, the actual Docker edge gateway in `HOST_PROXY_IP` (currently `172.19.0.1`), and `PUBLIC_CADDYFILE` pointing to `Caddyfile.nginx`. Public mode enforces Secure cookies and disables the localhost HTTP exception. Nginx replaces forwarded headers with the actual scheme/client; Caddy trusts only the explicitly configured host gateway, following [Caddy's trusted proxy configuration](https://caddyserver.com/docs/caddyfile/options#trusted-proxies). Revalidate that gateway if the edge network is recreated.
+
+```sh
+COMPOSE_FILE=compose.yaml:compose.tunnel.yaml:compose.public-proxy.yaml COMPOSE_ENV_FILES=.env.server node scripts/ops/check-public-proxy.mjs
+```
+
+On echoa, the overlay and internal proxy file are in `/opt/sarvin-planner/shared/public-proxy`, secrets/config are in mode-600 `/opt/sarvin-planner/shared/.env.server`, and `/opt/sarvin-planner/manage` includes all three Compose files. The backup service uses the same config. The previous private access wrapper/config are retained under `shared/before-public-20261109` for deliberate rollback. A backup was taken before switching. Never restore the insecure tunnel settings while leaving the public Nginx listener enabled: disable that listener and reload Nginx first if rolling back.
+
+Only Nginx 8443 is newly public. Caddy remains loopback-only; database/API/web have no public ports. Nginx access logging is off for this site, error logs use the existing rotated `/var/log/nginx/*.log` policy, and HTTP accidentally sent to 8443 redirects to canonical HTTPS. No SSH tunnel is needed to use the app. The old localhost tunnel URL is no longer a supported login origin.
+
+## Initial private server access (superseded on echoa)
+
+Use `compose.yaml` plus `compose.tunnel.yaml` **instead of** the public HTTPS override. The tunnel override publishes only `127.0.0.1:18080` on the server, removes the PostgreSQL host port, keeps the database network internal, and applies memory/CPU limits. Nginx and other existing services on ports 80/443 remain untouched. HTTP and non-Secure cookies are allowed only for the exact localhost origins; the remote transport is encrypted by SSH. Never change the binding to `0.0.0.0` or allow an IP/public HTTP origin. A host TLS proxy requires the separate public override above.
+
+Generate independent secrets into a mode-600 `.env.tunnel` using `.env.tunnel.example`, and set explicit release image tags. Validate without printing configuration:
+
+```sh
+COMPOSE_FILE=compose.yaml:compose.tunnel.yaml COMPOSE_ENV_FILES=.env.tunnel node scripts/ops/check-tunnel.mjs
+```
+
+Build images for the server architecture (`linux/amd64` on echoa), using the pinned lockfile. Build locally when server resources are constrained, then transfer images with `docker image save | gzip | ssh echoa 'gunzip | docker load'`. Transfer only Git-eligible source files, never local env files, owner credentials or `.local` artifacts. The separately generated server env file must be sent over SSH and stored mode 600. Verify image IDs and source hashes after transfer.
+
+The installation layout is `/opt/sarvin-planner/releases/<release>`, `/opt/sarvin-planner/current`, `/opt/sarvin-planner/shared/.env.tunnel` and `/opt/sarvin-planner/backups`. Run Compose with the explicit env and both config files. Apply committed migrations once, then start the application. Create the first owner only after checking the new database has no owner; do not reuse local data or reset an existing owner.
+
+To access the server from this computer, keep this command running:
+
+```sh
+ssh -N -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -L 127.0.0.1:18080:127.0.0.1:18080 echoa
+```
+
+Open http://localhost:18080. This URL is the **server application through the tunnel**, separate from the local application at port 8080. The tunnel must be reconnected after the computer/network restarts. VPN routing initially prevented SSH banner exchange; connection worked after the VPN was disconnected. Private access does not verify public DNS, TLS certificates, HTTPS cookies, certificate renewal or off-server backup scheduling; those acceptance items stay open until configured.
 
 ## Server prerequisites and configuration
 
@@ -61,3 +97,21 @@ Readiness `/api/health` checks PostgreSQL; liveness `/api/health/live` checks on
 An application rollback means selecting the previous immutable `API_IMAGE`/`WEB_IMAGE` tags and restarting those services **only if the current schema remains backward-compatible**. Applied migrations are never edited or automatically reversed. For an incompatible migration, prefer a forward repair; otherwise restore the pre-migration backup to a new database during a maintenance window and explicitly assess data written since the backup. An old image alone does not restore an old schema.
 
 Remaining real-host checks: access/inventory, DNS, HTTPS/cookie verification, owner bootstrap, off-server scheduled backup and downloaded restore, reboot persistence, monitoring delivery and certificate renewal.
+
+## Current private release and operator commands
+
+Verified release: `20261109-101631-c81a785606b2` on echoa. `/opt/sarvin-planner/manage ps` checks the isolated stack; its wrapper fixes the Compose project/config/env paths. The new owner exists, so do not run owner creation again. No local schedules were imported. Operator receipt is `/opt/sarvin-planner/shared/release.json`; no secrets are included.
+
+`systemctl status sarvin-backup.timer` shows the daily 03:30 Tehran schedule. `systemctl start sarvin-backup.service` makes a protected on-server dump. Backups are in `/opt/sarvin-planner/backups`. The first real backup was downloaded to the client and restored in a disposable database. Automated off-server upload, encryption/recovery policy, retention and notifications still need a chosen destination. Local dumps are not pruned automatically. Approximately 4.3 GiB disk was free after deployment; never prune other projects' images or volumes as routine maintenance.
+
+Only Sarvin containers were restarted for persistence verification. Do not reboot the shared server or change Nginx/Echoa services for Sarvin checks without explicit authorization. Public-domain deployment later requires resolving the existing Nginx ownership of 80/443 before applying the public Compose override.
+
+### Certificate renewal operator note
+
+The timer uses `/opt/echoa-certbot/bin/certbot` (5.8), **not** Ubuntu's `/usr/bin/certbot` (2.9). The latter cannot handle the existing IP-only certificate. The following staging renewal and Nginx deploy-hook test passed on 2026-11-09 without replacing the active certificate:
+
+```sh
+/opt/echoa-certbot/bin/certbot renew --cert-name echoa-api-ip --dry-run --run-deploy-hooks --no-random-sleep-on-renew
+```
+
+The active timer checks every six hours with up to 30 minutes jitter. Keep its existing HTTP-01 webroot route on port 80 intact. Public access and Secure-cookie verification passed after the Nginx reload. Automatic external failure notifications still need a destination.

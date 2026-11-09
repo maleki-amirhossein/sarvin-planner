@@ -2,7 +2,7 @@
 
 A single-user Persian, RTL personal planner with Jalali day/week navigation, task scheduling, recurring work/classes, actual reading logs, weekly reading goals and review/export. All screens use the NestJS REST API; business rules, authorization and PostgreSQL access stay in NestJS.
 
-**Local app:** http://localhost:8080 through Docker/Caddy, or http://localhost:3000 for host development. No domain is needed. Features are implemented; actual class entry and real-server deployment are pending. The real owner must set a password locally and choose the work start date. No production sample data or default password is installed.
+**Local app:** http://localhost:8080 through Docker/Caddy, or http://localhost:3000 for host development. No domain is needed. Features are implemented; three real weekly music schedules are saved from 2026-11-09. Real-server deployment and remaining acceptance are pending. The local owner is already provisioned; see the handoff before running setup again. No production sample data or default password is installed.
 
 See the [implementation checklist](docs/implementation/Sarvin-Planner-Implementation-Plan-EN.md), [QA evidence](docs/implementation/qa-report.md), [handoff](docs/implementation/handoff.md), and [Persian user guide](docs/user-guide-fa.md).
 
@@ -49,7 +49,7 @@ pnpm --filter @sarvin/api build
 pnpm owner malekii.dev@gmail.com
 ```
 
-Enter the password in the masked terminal prompts (12–1024 characters). There is exactly one owner and no public registration. Sign in and explicitly choose the effective date for Saturday–Wednesday work, 08:00–13:00. Classes are empty until real details are provided. For password recovery, run `pnpm owner malekii.dev@gmail.com --recover`; this revokes all sessions. Never pass passwords as arguments.
+Enter the password in the masked terminal prompts (12–1024 characters). There is exactly one owner and no public registration. Sign in and explicitly choose the effective date for Saturday–Wednesday work, 08:00–13:00. The current local owner already has three real weekly music schedules; see the handoff for their confirmed days/times. New installations start without class data. For password recovery, run `pnpm owner malekii.dev@gmail.com --recover`; this revokes all sessions. Never pass passwords as arguments.
 
 For the full Docker stack, use its interactive CLI instead:
 
@@ -117,3 +117,9 @@ Backups contain private data and password hashes; protect them and keep them out
 [Deployment instructions](docs/implementation/deployment.md) cover production env validation, Caddy HTTPS, immutable image tags, firewall/ports, secure owner bootstrap, encrypted off-server restic backups, retention, monitoring, restore and rollback. `compose.production.yaml` removes PostgreSQL's published port and publishes only Caddy 80/443; it requires Compose 2.24.4+. Real DNS, HTTPS, server access, off-server backup destination and production persistence checks remain pending.
 
 Dates are displayed in Persian with Tehran timezone and Saturday week boundaries. API instants carry UTC/offsets and use PostgreSQL `timestamptz`; local dates remain separate. Recurrence and goal attribution are authoritative in Nest. Planning a reading task or checking it complete does not log actual reading.
+
+## Server deployment
+
+The live server app is **https://87.107.160.160:8443** (no SSH tunnel required). It uses a valid IP HTTPS certificate, Secure session cookies and an independent database on `echoa`; local schedules were not imported. The existing server owner/password are unchanged. The local Docker app remains separate at port 8080.
+
+The host Nginx TLS listener forwards to loopback-only Caddy; `compose.public-proxy.yaml` adds the public HTTPS settings after the base/tunnel configs. Use `/opt/sarvin-planner/manage` on the server. See the [server runbook](docs/implementation/deployment.md) and [verification report](docs/implementation/qa-report.md) for rollout, certificate renewal, backup and remaining acceptance details.

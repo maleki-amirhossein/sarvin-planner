@@ -9,7 +9,16 @@ import type {
   DropInfo,
 } from "@fullcalendar/react";
 import { Draggable } from "@fullcalendar/react/interaction";
-import { Plus, ArrowLeft, LockKeyhole } from "lucide-react";
+import {
+  Plus,
+  ArrowLeft,
+  LockKeyhole,
+  CalendarDays,
+  Clock3,
+  BookOpen,
+  Sun,
+  Sparkles,
+} from "lucide-react";
 import { api, type DTO } from "@/lib/api";
 import { useApi } from "@/lib/queries";
 import {
@@ -27,6 +36,7 @@ import { WeekCalendar } from "./week-calendar";
 import { useEditor } from "./editor-provider";
 import {
   DateBar,
+  DateNavigation,
   Empty,
   EventCard,
   GoalCard,
@@ -34,6 +44,7 @@ import {
   TaskRow,
 } from "./planner-parts";
 import { QueryState } from "./query-state";
+import { BotanicalArt } from "./botanical-art";
 import { FormFeedback, useFormAction } from "./form-support";
 function onDay(events: DTO["ScheduleEvent"][], day: string) {
   const start = inputInstant(day, "00:00"),
@@ -70,9 +81,32 @@ function Priorities({ date }: { date: string }) {
       {p.data?.occurrenceIds.map((id, i) => (
         <PriorityItem key={id} id={id} index={i} />
       ))}
-      {p.data && !p.data.occurrenceIds.length && (
-        <Empty>مهم‌ترین قدم امروزت را انتخاب کن.</Empty>
-      )}
+      {p.data &&
+        Array.from({ length: 3 - p.data.occurrenceIds.length }, (_, i) => (
+          <div key={i} className="priority-placeholder">
+            <span aria-hidden="true" className="priority-marker">
+              {number(p.data.occurrenceIds.length + i + 1)}
+            </span>
+            <div>
+              <p className="text-sm font-semibold">
+                {
+                  ["اولویت اول", "اولویت دوم", "اولویت سوم"][
+                    p.data.occurrenceIds.length + i
+                  ]
+                }
+              </p>
+              <p className="mt-1 text-xs leading-6 text-muted-foreground">
+                {
+                  [
+                    "مهم‌ترین قدم این روزت چیست؟",
+                    "برای یک کار مهم دیگر جا باز کن.",
+                    "یک قدم کوچک هم کافی است.",
+                  ][p.data.occurrenceIds.length + i]
+                }
+              </p>
+            </div>
+          </div>
+        ))}
     </section>
   );
 }
@@ -319,21 +353,116 @@ export function WeekPage() {
             : "#795013",
   }));
   return (
-    <>
-      <DateBar title="هفته‌ای با فرصت‌های تازه" />
-      <p className="mb-5 text-sm text-muted-foreground">
-        {number(events.length)} رویداد ·{" "}
-        {number(events.filter((e) => e.category === "reading").length)} برنامه
-        مطالعه · زمان تهران
-      </p>
-      <QueryState query={schedule} />
-      <p role="status" className="text-sm text-primary">
-        {saving ? "در حال ذخیره زمان…" : notice}
-      </p>
+    <div className="week-dashboard">
+      <section className="dashboard-hero">
+        <div className="relative z-10">
+          <p className="mb-2 flex items-center gap-2 text-xs font-medium text-primary">
+            <Sparkles size={15} aria-hidden="true" /> فرصتی برای یک شروع تازه
+          </p>
+          <h1 className="text-2xl font-extrabold leading-relaxed xl:text-3xl">
+            هفته‌ای با فرصت‌های تازه
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {formatJalaliDate(fromLocalDate(week), "d MMMM")} تا{" "}
+            {formatJalaliDate(fromLocalDate(shiftDate(week, 6)), "d MMMM yyyy")}
+          </p>
+        </div>
+        <BotanicalArt className="hero-botanical" />
+      </section>
+      <div className="week-summary">
+        <div className="summary-pill">
+          <span className="summary-icon bg-personal text-[#c77542]">
+            <CalendarDays size={23} aria-hidden="true" />
+          </span>
+          <p>
+            {schedule.data ? (
+              <>
+                <strong>{number(events.length)}</strong> رویداد این هفته
+              </>
+            ) : (
+              "در حال دریافت برنامه…"
+            )}
+          </p>
+        </div>
+        <div className="summary-pill">
+          <span className="summary-icon bg-work text-primary">
+            <Clock3 size={23} aria-hidden="true" />
+          </span>
+          <p>
+            {schedule.data ? (
+              <>
+                <strong>
+                  {number(
+                    schedule.data.days.reduce(
+                      (sum, day) => sum + day.occupiedMinutes,
+                      0,
+                    ) / 60,
+                  )}
+                </strong>{" "}
+                ساعت برنامه‌ریزی‌شده
+              </>
+            ) : (
+              "زمان برنامه‌ها"
+            )}
+          </p>
+        </div>
+        <WeeklyReadingSummary week={week} />
+      </div>
+      <div className="week-mobile-navigation lg:hidden">
+        <DateNavigation />
+      </div>
+      {!schedule.data && (
+        <div className="week-recovery-navigation hidden lg:block">
+          <DateNavigation />
+        </div>
+      )}
+      <div className="week-feedback">
+        <QueryState query={schedule} />
+        <p role="status" className="text-sm text-primary">
+          {saving ? "در حال ذخیره زمان…" : notice}
+        </p>
+      </div>
       {schedule.data && (
         <>
-          <div className="hidden gap-5 lg:grid xl:grid-cols-[minmax(0,1fr)_280px]">
-            <div className="min-w-0">
+          <div className="week-workspace hidden lg:contents">
+            <section
+              className="week-calendar-panel surface min-w-0"
+              aria-label="برنامه هفتگی"
+            >
+              <div className="calendar-toolbar">
+                <div className="flex flex-wrap items-center gap-5">
+                  <h2 className="flex items-center gap-2 text-lg">
+                    <CalendarDays
+                      className="text-primary"
+                      size={25}
+                      aria-hidden="true"
+                    />{" "}
+                    برنامه هفتگی
+                  </h2>
+                  <ul
+                    className="calendar-legend"
+                    aria-label="راهنمای رنگ برنامه‌ها"
+                  >
+                    <li>
+                      <span className="bg-work border-primary/30" />
+                      کار
+                    </li>
+                    <li>
+                      <span className="bg-university border-blue-300" />
+                      کلاس
+                    </li>
+                    <li>
+                      <span className="bg-reading border-purple-300" />
+                      مطالعه
+                    </li>
+                    <li>
+                      <span className="bg-personal border-orange-200" />
+                      شخصی
+                    </li>
+                  </ul>
+                </div>
+                <DateNavigation />
+              </div>
               <WeekCalendar
                 date={date}
                 events={calendarEvents}
@@ -357,13 +486,16 @@ export function WeekPage() {
                 onResize={move}
                 onDrop={receive}
               />
-              <p className="mt-2 text-xs leading-6 text-muted-foreground">
+              <p className="calendar-help text-xs leading-6 text-muted-foreground">
                 جابجایی و تغییر طول کارها با گام ۱۵ دقیقه انجام می‌شود. برای
                 تغییر دقیق یا استفاده با صفحه‌کلید، جزئیات کار را باز کنید. کار
                 ثابت و کلاس قفل‌اند.
               </p>
-            </div>
-            <aside className="space-y-4">
+            </section>
+            <aside
+              className="week-detail space-y-4"
+              aria-label="جزئیات روز و هدف‌های هفته"
+            >
               <section className="surface space-y-3 p-4">
                 <h2>{formatJalaliDate(fromLocalDate(date), "EEEE d MMMM")}</h2>
                 {selected.map((e) => (
@@ -375,11 +507,15 @@ export function WeekPage() {
                   className="w-full"
                   onClick={() => editor.task({ date, scheduled: true })}
                 >
-                  افزودن به این روز
+                  <Plus size={17} /> افزودن به این روز
                 </Button>
               </section>
               <GoalCard week={week} />
               <Priorities date={date} />
+              <div className="gentle-reminder">
+                <Sun size={30} aria-hidden="true" />
+                <p>برای خودت هم وقت بگذار.</p>
+              </div>
               <UnscheduledDragList />
             </aside>
           </div>
@@ -478,7 +614,33 @@ export function WeekPage() {
           }}
         />
       </Modal>
-    </>
+    </div>
+  );
+}
+
+function WeeklyReadingSummary({ week }: { week: string }) {
+  const goal = useApi("getWeeklyGoal", { path: { weekStart: week } }),
+    editor = useEditor();
+  return (
+    <button
+      className="summary-pill text-start transition-colors hover:bg-reading/40"
+      disabled={!goal.data}
+      onClick={() => goal.data && editor.goal(goal.data)}
+      aria-label="مشاهده و ویرایش هدف مطالعه این هفته"
+    >
+      <span className="summary-icon bg-reading text-reading-foreground">
+        <BookOpen size={23} aria-hidden="true" />
+      </span>
+      <span>
+        {goal.data?.target ? (
+          <>
+            <strong>{number(goal.data.percent ?? 0)}٪</strong> از هدف مطالعه
+          </>
+        ) : (
+          "هدف مطالعه"
+        )}
+      </span>
+    </button>
   );
 }
 

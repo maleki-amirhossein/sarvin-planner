@@ -3,8 +3,8 @@
 @import "@fontsource-variable/vazirmatn";
 
 :root {
-  --background: #faf9f7;
-  --foreground: #182a32;
+  --background: #faf8f5;
+  --foreground: #18343e;
   --card: #ffffff;
   --card-foreground: var(--foreground);
   --primary: #00796e;
@@ -17,7 +17,7 @@
   --accent-foreground: #00594f;
   --destructive: #b42318;
   --destructive-foreground: #ffffff;
-  --border: #dbe1df;
+  --border: #e8e6e2;
   --input: #c5cfcb;
   --ring: #008d80;
   --popover: #ffffff;
@@ -30,10 +30,11 @@
   --work-foreground: #00594f;
   --university: #e4efff;
   --university-foreground: #234d83;
-  --radius: 0.875rem;
+  --radius: 1.25rem;
   --control-height: 2.75rem;
   --space-page: clamp(1rem, 2vw, 2rem);
-  --shadow-card: 0 2px 8px rgb(24 42 50 / 0.03);
+  --shadow-card:
+    0 3px 7px rgb(45 50 44 / 0.025), 0 10px 28px rgb(45 50 44 / 0.035);
 }
 @theme inline {
   --color-background: var(--background);
@@ -161,4 +162,365 @@ progress::-webkit-progress-value {
 progress::-moz-progress-bar {
   background: var(--primary);
   border-radius: 999px;
+}
+
+/* Sarvin's shared shell and weekly dashboard. Calendar selectors are explicit
+   v7 class hooks, so they do not depend on generated theme class names. */
+.shell-sidebar {
+  background: linear-gradient(180deg, #fffdfb, #fcfaf7);
+  overflow-y: auto;
+}
+.shell-sidebar nav {
+  margin-bottom: 96px;
+}
+.shell-nav-link {
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+.shell-nav-link[aria-current="page"] {
+  background: linear-gradient(110deg, #e4f5eb, #d9f0e7);
+  font-weight: 750;
+  border-radius: 1.75rem;
+}
+.sidebar-note {
+  position: relative;
+  flex-shrink: 0;
+  padding: 2rem 1rem 1.25rem;
+  border-radius: 1.5rem;
+  background: linear-gradient(135deg, #e7f4e6, #edf8ef);
+}
+.sidebar-sprig {
+  position: absolute;
+  width: 126px;
+  height: 100px;
+  inset-block-start: -78px;
+  inset-inline-start: 20px;
+  transform: rotate(-8deg);
+}
+.note-underline {
+  display: block;
+  width: 60px;
+  height: 9px;
+  margin: 12px auto 0;
+  border-top: 2px solid #acd3b2;
+  border-radius: 50%;
+  transform: rotate(-5deg);
+}
+.week-dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.dashboard-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 150px;
+  padding: 25px 30px;
+  border: 1px solid #e5f0e8;
+  border-radius: 30px;
+  background: linear-gradient(110deg, #dcefe6, #e9f5ed 60%, #e0f1e9);
+}
+.dashboard-hero::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: -30px;
+  inset-block-end: -90px;
+  width: 360px;
+  height: 140px;
+  border-radius: 50%;
+  background: #bedfce;
+  opacity: 0.3;
+  transform: rotate(-12deg);
+}
+.hero-botanical {
+  position: absolute;
+  inset-inline-end: 10px;
+  inset-block-end: -12px;
+  width: 230px;
+  height: 170px;
+  opacity: 0.85;
+}
+.week-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.summary-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 68px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: linear-gradient(160deg, #fff, #fffdfb);
+  box-shadow: var(--shadow-card);
+  font-size: 13px;
+  font-weight: 500;
+}
+.summary-pill strong {
+  font-size: 18px;
+}
+.summary-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 18px;
+  flex-shrink: 0;
+}
+.week-feedback:has(> p:only-child:empty) {
+  display: none;
+}
+.week-calendar-panel {
+  overflow: hidden;
+}
+.calendar-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.calendar-legend li {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.calendar-legend li span {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  border-width: 1px;
+}
+.week-calendar-panel .calendar-grid {
+  border: 0;
+  border-radius: 0;
+  padding: 0 12px;
+  box-shadow: none;
+}
+.calendar-grid {
+  --fc-monarch-primary: var(--primary);
+  --fc-monarch-primary-foreground: #fff;
+  --fc-monarch-tertiary: var(--primary);
+  --fc-monarch-tertiary-foreground: #fff;
+  --fc-monarch-background: #fff;
+  --fc-monarch-foreground: var(--foreground);
+  --fc-monarch-border: #e9eae6;
+  --fc-monarch-strong-border: #d8e2dc;
+  --fc-monarch-highlight: #d9eee580;
+  --fc-monarch-now: #ec7965;
+  --fc-monarch-outline: var(--ring);
+}
+.sarvin-day-heading {
+  text-align: center;
+  border-inline-start: 1px solid #eef0eb;
+}
+.sarvin-day-heading-inner {
+  width: 100%;
+}
+.sarvin-day-lane {
+  border-style: solid;
+  border-color: #e9eae6;
+}
+.sarvin-today {
+  background: linear-gradient(180deg, #eef8f1b3, #e8f6f080);
+}
+.calendar-day-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  min-height: 108px;
+  padding: 14px 2px 10px;
+}
+.calendar-day-button[aria-pressed="true"] {
+  color: var(--primary);
+}
+.calendar-day-date {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 650;
+}
+.calendar-day-current {
+  background: var(--primary);
+  color: white;
+}
+.calendar-today-label {
+  padding: 1px 14px;
+  border-radius: 999px;
+  background: #d8eee4;
+  color: #00594f;
+  font-size: 10px;
+}
+.calendar-grid .sarvin-calendar-event {
+  border: 0;
+  border-inline-start: 4px solid var(--fc-event-contrast-color);
+  border-radius: 9px;
+  background:
+    linear-gradient(135deg, #ffffff40, transparent), var(--fc-event-color);
+  box-shadow: 0 2px 3px #18343e05;
+}
+.calendar-event-content {
+  padding: 5px 3px;
+  line-height: 1.7;
+}
+.calendar-help {
+  padding: 12px 20px 16px;
+  border-top: 1px solid var(--border);
+}
+.reading-goal {
+  background: linear-gradient(135deg, #fcf8ff, #f2ecf9);
+  border-color: #eae1f1;
+}
+.reading-art {
+  position: relative;
+  width: 135px;
+  height: 100px;
+  margin: 0 auto;
+}
+.reading-art > svg:first-child {
+  position: absolute;
+  width: 100px;
+  height: 88px;
+  inset-inline-end: -18px;
+  top: -8px;
+  transform: rotate(-18deg);
+}
+.reading-art > svg:last-child {
+  position: absolute;
+  width: 135px;
+  height: 85px;
+  bottom: 0;
+}
+.priority-placeholder {
+  display: flex;
+  gap: 10px;
+  align-items: start;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.priority-marker {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid #d4d9d4;
+  border-radius: 50%;
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.gentle-reminder {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 22px 18px;
+  border-radius: 22px;
+  background: linear-gradient(120deg, #fff2dd, #ffecd1);
+  color: #765325;
+  font-size: 13px;
+  font-weight: 600;
+}
+.gentle-reminder svg {
+  color: #df9b35;
+  flex-shrink: 0;
+}
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .week-detail {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: start;
+  }
+  .week-detail > * {
+    margin: 0;
+  }
+}
+@media (min-width: 1280px) {
+  .week-dashboard {
+    grid-template-columns: minmax(0, 1fr) 264px;
+    gap: 22px;
+  }
+  .dashboard-hero,
+  .week-summary,
+  .week-recovery-navigation,
+  .week-feedback,
+  .week-calendar-panel {
+    grid-column: 1;
+  }
+  .week-detail {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    padding-top: 128px;
+  }
+  .shell-week .shell-header {
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-start: 22px;
+    z-index: 10;
+    min-height: 44px;
+  }
+  .shell-week .shell-caption {
+    display: none;
+  }
+  .dashboard-hero {
+    padding-inline-end: 170px;
+  }
+  .hero-botanical {
+    width: 195px;
+  }
+}
+@media (max-width: 767px) {
+  .dashboard-hero {
+    min-height: 164px;
+    padding: 22px;
+    border-radius: 24px;
+  }
+  .dashboard-hero h1 {
+    max-width: 240px;
+    font-size: 23px;
+  }
+  .hero-botanical {
+    width: 150px;
+    inset-inline-end: -38px;
+    opacity: 0.22;
+  }
+  .week-summary {
+    gap: 8px;
+  }
+  .summary-pill {
+    flex-direction: column;
+    gap: 7px;
+    padding: 12px 7px;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.8;
+  }
+  .summary-pill strong {
+    font-size: 15px;
+  }
+  .summary-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 14px;
+  }
 }
