@@ -900,3 +900,13 @@ Final completion rule: A core feature is Done only when it works with real data 
 | Date | Task | Status | Implementation | Verification | Evidence | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
 | 2026-11-10 | SP-COLORS-01 | **Done (source/build)** | Shared typed category palette, event/card colors, list badges and complete legend. | Web typecheck/build, targeted ESLint, Prettier/diff and six contrast pairs >6.1:1 passed. | event-colors.ts; qa-report.md; handoff.md | No deployment/browser acceptance claimed; original 181/210 unchanged; Desktop mirror unavailable. |
+
+
+## Random welcome titles — authorized 2026-11-10
+
+- [x] **SP-WELCOME-01 — Done (source/build):** use the approved 80-message JSON for the shared Today/Week welcome h1; choose once per document load and preserve the choice during navigation. Web types/build, targeted lint, formatting and JSON checks passed.
+- [ ] **SP-WELCOME-02 — Pending:** deploy and verify served assets; browser visual acceptance remains deferred.
+
+| Date | Task | Status | Implementation | Verification | Evidence | Limits |
+| --- | --- | --- | --- | --- | --- | --- |
+| 2026-11-10 | SP-WELCOME-01 | **Done (source/build)** | JSON-backed random welcome h1; browser-only selection with server/hydration fallback and stable navigation. | Web typecheck/build, targeted ESLint, Prettier/diff; 80 unique IDs/texts and valid categories. | welcome-title.tsx; sarvin-welcome-messages.fa.json; qa-report.md; handoff.md | No rollout/browser acceptance claimed; original 181/210 unchanged; Desktop mirror unavailable. |

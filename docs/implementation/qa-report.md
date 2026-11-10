@@ -376,3 +376,21 @@ Prettier and diff checks passed. All six foreground/background pairs exceed 6.1:
 contrast (one-off luminance calculation). Browser visual acceptance stays deferred.
 No server or local Docker rollout was performed. Original 181/210 count unchanged.
 The original Desktop mirror remains unidentified/unavailable; no document recreated.
+
+
+## Random welcome titles — 2026-11-10
+
+**SP-WELCOME-01 — Done (source/build):** moved the approved 80-message Persian
+JSON into `apps/web/src/data/sarvin-welcome-messages.fa.json` and connected it to
+the existing welcome card's h1 on Today and Week. `welcome-title.tsx` selects once
+when the browser subscribes, retaining that selection across route/date changes.
+A new document load/reload makes a fresh random selection (repeats are possible).
+Server rendering and initial hydration use the existing page title as fallback;
+random selection never runs during server rendering. Existing wrapping styles
+allow long messages to occupy multiple lines.
+
+Verification: web typecheck and production build, targeted ESLint with zero
+warnings, Prettier and diff checks passed. JSON parse/content checks confirmed
+80 unique IDs/texts and valid categories. No browser control was used; visual
+acceptance remains deferred. No public or local Docker rollout performed.
+Original 181/210 count unchanged; Desktop mirror remains unavailable.

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { WelcomeTitle } from "./welcome-title";
 
 /** Stylized tar (double bowl) and setar (pear-shaped bowl), not interactive. */
 export function SarvinMusicArt({ className = "" }: { className?: string }) {
@@ -120,7 +121,7 @@ export function SarvinWelcome({
     >
       <div className="sarvin-welcome-copy">
         <p className="sarvin-dedication">با مهر، برای سروین</p>
-        <h1>{title}</h1>
+        <WelcomeTitle fallback={title} />
         <p className="sarvin-welcome-description">{description}</p>
         <p className="sarvin-welcome-date">{date}</p>
       </div>
