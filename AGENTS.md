@@ -237,6 +237,8 @@ HTTPS/auth/PWA, API-restart session, certificate renewal dry-run, daily 03:30 Te
 backup and downloaded isolated restore passed. Cert renewal uses the host-installed
 script and digest-pinned Certbot container every six hours. Runtime remains host-owned;
 all backend ports private, Nginx 443/HTTP-01 80, Caddy loopback 18080. Unique guarded
-runner `amirhossein-sarvin-deploy` is online. GitHub variables/secret target it; source
-publication and actual Actions verification remain pending at this checkpoint.
-Original 181/210 unchanged; new VPS follow-up 2/3 Done. Browser control still deferred.
+runner `amirhossein-sarvin-deploy` is online. GitHub variables/secret target it.
+Release `7d86a42` deployed successfully in Actions
+run `42791990699` (receipt 11/1); post-deploy session/data/general/PWA checks passed.
+Old GitHub runner registration retired; unreachable echoa services/data untouched.
+Original 181/210 unchanged; new VPS follow-up 3/3 Done. Browser control still deferred.

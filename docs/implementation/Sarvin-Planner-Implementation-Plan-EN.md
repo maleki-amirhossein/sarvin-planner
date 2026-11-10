@@ -919,9 +919,10 @@ Final completion rule: A core feature is Done only when it works with real data 
 - [x] **SP-VPS-02** — **Done** — User chose Ubuntu 20.04/fresh DB. Provisioned runtime,
   trusted IP HTTPS/renewal, new masked owner, five migrations and daily backups.
   Public auth/security/PWA smoke, restart-session and downloaded restore passed.
-- [ ] **SP-VPS-03** — Publish and verify an actual Actions deployment on the guarded
-  new runner, post-deployment session/data continuity and old-runner retirement.
+- [x] **SP-VPS-03** — **Done** — Actions run 42791990699 passed on the guarded new
+  runner; post-deployment session/data/PWA checks passed; old GitHub runner retired.
 
 | Date | Task | Status | Evidence | Remaining |
 | --- | --- | --- | --- | --- |
 | 2026-11-10 | SP-VPS-01/02 | **Done** | Live https://5.160.200.254; verified immutable artifact; 14 deployment tests; public auth/PWA/config checks; certificate renewal dry-run; daily backup and downloaded restore. | Actual new-host Actions deployment pending. Explicit fresh DB; no old data imported. Original 181/210 unchanged. |
+| 2026-11-10 | SP-VPS-03 | **Done** | [Run 42791990699](https://github.com/maleki-amirhossein/sarvin-planner/actions/runs/42791990699), commit 7d86a42, receipt 11/1 deployed; HTTPS/PWA, existing-session/data continuity and logout passed; old GitHub runner registration removed. | New VPS 3/3 Done; original 181/210 unchanged. Off-server retention/alerts and browser/reboot acceptance remain open. |

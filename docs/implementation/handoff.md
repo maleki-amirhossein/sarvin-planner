@@ -361,8 +361,27 @@ label. Installed host gateway reads validated origin from protected host config.
 Fourteen deployment tests, shell syntax, diff checks and workflow lint passed (only
 the local linter's outdated diagnostic for existing `concurrency.queue` excluded).
 New runner is online; GitHub target variables/secret have been switched to it.
-**SP-VPS-03 remains open until an actual Actions deployment is verified.**
+**SP-VPS-03 is verified in the acceptance record below.**
 
 Browser acceptance remains deferred. Automated off-server retention/notifications
 remain pending. Ubuntu 20.04 retained by explicit request; no claim of current OS
 support. Original 181/210 unchanged; Desktop mirror unavailable, not recreated.
+
+
+## Replacement VPS CI/CD acceptance — 2026-11-10
+
+**SP-VPS-03 — Done:** [Actions run 42791990699](https://github.com/maleki-amirhossein/sarvin-planner/actions/runs/42791990699)
+passed full hosted verification/build and deployment on `amirhossein-sarvin-deploy`.
+Commit `7d86a42` is live at **https://5.160.200.254**; host receipt records 11/1 as
+`deployed`, with a protected pre-release backup and previous immutable release retained.
+Post-release general/PWA smoke passed; the pre-deployment owner session survived,
+task fingerprint was unchanged, and logout succeeded. Verification cookie removed.
+API/web/database are healthy; backup and certificate-renewal timers are active.
+
+Old GitHub runner registration was removed after new-host acceptance. Echoa's remote
+services/data remain untouched because it was unreachable; no claim of stopping or
+deleting the old server. Only completed bootstrap download/import artifacts on the
+new host were removed. Current/previous images, source archives and backups remain.
+All three VPS follow-up tasks are **Done**; original 181/210 unchanged. Fresh database
+and retained Ubuntu 20.04 reflect explicit user choices. Automated off-server retention,
+alerts, browser/device and actual reboot acceptance remain separate open requirements.

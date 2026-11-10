@@ -114,13 +114,13 @@ scripts/ops/restore-test.sh /private/path/to/sarvin.dump
 
 Backups contain private data and password hashes; protect them and keep them out of Git/public assets. Restore testing creates and drops a separate generated database. It never overwrites the live database.
 
-[Deployment instructions](docs/implementation/deployment.md) cover production env validation, Caddy HTTPS, immutable image tags, firewall/ports, secure owner bootstrap, encrypted off-server restic backups, retention, monitoring, restore and rollback. `compose.production.yaml` removes PostgreSQL's published port and publishes only Caddy 80/443; it requires Compose 2.24.4+. Real DNS, HTTPS, server access, off-server backup destination and production persistence checks remain pending.
+[Deployment instructions](docs/implementation/deployment.md) cover production env validation, Caddy HTTPS, immutable image tags, firewall/ports, secure owner bootstrap, encrypted off-server restic backups, retention, monitoring, restore and rollback. `compose.production.yaml` removes PostgreSQL's published port and publishes only Caddy 80/443; it requires Compose 2.24.4+. The current IP HTTPS deployment is verified below. A custom domain, automated off-server backups and remaining browser/reboot acceptance are pending.
 
 Dates are displayed in Persian with Tehran timezone and Saturday week boundaries. API instants carry UTC/offsets and use PostgreSQL `timestamptz`; local dates remain separate. Recurrence and goal attribution are authoritative in Nest. Planning a reading task or checking it complete does not log actual reading.
 
 ## Server deployment
 
-The live server app is **https://5.160.200.254** (no SSH tunnel required). It uses a valid IP HTTPS certificate, Secure session cookies and an fresh database on `amirhossein`; old/local schedules were not imported. New server credentials are stored privately in `.local/amirhossein-owner-login.json` (mode 600). The local Docker app remains separate at port 8080.
+The live server app is **https://5.160.200.254** (no SSH tunnel required). It uses a valid IP HTTPS certificate, Secure session cookies and a fresh database on `amirhossein`; old/local schedules were not imported. New server credentials are stored privately in `.local/amirhossein-owner-login.json` (mode 600). The local Docker app remains separate at port 8080.
 
 The host Nginx TLS listener forwards to loopback-only Caddy; `compose.public-proxy.yaml` adds the public HTTPS settings after the base/tunnel configs. Use `/opt/sarvin-planner/manage` on the server. See the [server runbook](docs/implementation/deployment.md) and [verification report](docs/implementation/qa-report.md) for rollout, certificate renewal, backup and remaining acceptance details.
 

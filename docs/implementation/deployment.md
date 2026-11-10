@@ -1,4 +1,4 @@
-> Current echoa application releases use [automatic CI/CD](ci-cd.md).
+> Current amirhossein application releases use [automatic CI/CD](ci-cd.md).
 > `/opt/sarvin-planner/manage` reads host-owned Compose files from `shared/runtime`
 > and image tags from `current/images.env`. Current CI receipt: `shared/ci-state.json`.
 > The original private/public setup below records bootstrap history and alternative
@@ -6,9 +6,31 @@
 
 # Personal-server deployment
 
-Current access is **https://87.107.160.160:8443** on `echoa`. At the user’s request on 2026-11-09, the initial private deployment was promoted to public HTTPS without purchasing/configuring a domain. The existing valid IP certificate is terminated by a dedicated host Nginx listener. The same server database, account and password are preserved. Scheduled off-server backup/retention and remaining acceptance checks are still pending; see the QA report. Never point the server at the local owner database or seed production fixtures.
+Current access is **https://5.160.200.254** on `ssh amirhossein`. On 2026-11-10,
+the user explicitly chose to retain Ubuntu 20.04 and start with a fresh database.
+The new owner credentials are stored privately in `.local/amirhossein-owner-login.json`;
+no local/echoa schedules or data were imported. Do not provision the owner again.
 
-## Current public IP HTTPS topology
+Topology: `Internet → Nginx :443 → Caddy 127.0.0.1:18080 → private Nest/Next/Postgres`.
+Nginx configuration is `infra/nginx/sarvin-vps.conf`; port 80 serves ACME challenges
+and redirects to HTTPS. Runtime Compose files are under `shared/runtime`; use the
+stable `/opt/sarvin-planner/manage` wrapper. `PUBLIC_APP_ORIGIN=https://5.160.200.254`
+and the inspected host gateway `172.19.0.1` are in protected `shared/.env.server`.
+Never switch the running public service to the insecure tunnel-only overlay.
+
+`/etc/letsencrypt/live/sarvin-ip` holds the new certificate. A digest-pinned Certbot
+container is invoked by host-owned `/usr/local/lib/sarvin/renew-ip-certificate.sh`;
+`sarvin-cert-renew.timer` checks every six hours. Trusted HTTPS issuance and staging
+renewal plus Nginx reload passed. `sarvin-backup.timer` makes private local dumps at
+03:30 Tehran; a downloaded backup was restored successfully into a disposable DB.
+Automatic off-server encrypted retention/alerts remain pending. See [CI/CD operations](ci-cd.md)
+for runner/host ownership boundaries and current verification evidence.
+
+The old echoa VPS was unreachable during this work. Its data and unrelated services
+were not modified. The following sections preserve the **historical echoa setup**
+and alternative deployment instructions; they are not the current server settings.
+
+## Historical echoa public IP HTTPS topology
 
 `Internet → host Nginx :8443 (TLS) → Caddy 127.0.0.1:18080 → private Nest/Next containers`. The existing Nginx virtual hosts on ports 80/443 are unchanged. `infra/nginx/sarvin-echoa.conf` uses the existing Let's Encrypt IP certificate `/etc/letsencrypt/live/echoa-api-ip/fullchain.pem`; its private key remains host-only. The existing certbot timer and Nginx deploy hook manage renewal. IP certificates are short-lived; monitor renewal failures and expiry. See [Let's Encrypt IP certificate availability](https://letsencrypt.org/2026/01/15/6day-and-ip-general-availability).
 

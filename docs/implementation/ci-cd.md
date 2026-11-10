@@ -14,7 +14,7 @@ branches target the same application/database: the later successful run wins.
    Package images, committed source and SHA-256 checksums; retain the artifact for three days.
 4. A separate environment-bound job on the non-root amirhossein deployment runner downloads
    the verified artifact, then sends it over pinned-host **loopback** SSH. The server
-   initiates the GitHub connection because hosted runners cannot reach its SSH port.
+   initiates the GitHub connection, avoiding inbound SSH dependencies on hosted runners.
 5. The host validates archive boundaries, tags, architecture, revision, migration
    checksums and available disk space. Existing applied migrations cannot be rewritten.
 6. Create a private pre-deployment database backup. When new migrations exist,
@@ -209,5 +209,9 @@ General/PWA HTTP smoke, owner login/logout, CSRF/origin rejection, API-restart s
 continuity and runtime configuration checks passed. Fourteen local deployment tests,
 shell syntax and workflow lint passed; the installed actionlint predates the existing
 GitHub-supported `concurrency.queue` key, so only that existing diagnostic was excluded.
-A full deployment on the new runner is pending at this checkpoint; see QA/handoff for
-the subsequent Actions result. No browser control was used.
+The first full new-host deployment passed in [run 42791990699](https://github.com/maleki-amirhossein/sarvin-planner/actions/runs/42791990699):
+commit `7d86a42`, receipt 11/1 deployed, protected pre-release backup, previous images
+retained. Post-release general/PWA smoke and existing owner session/data continuity
+passed; verification session was logged out. The old GitHub runner registration
+was removed after success; unreachable echoa services/data remain untouched.
+No browser control was used.
