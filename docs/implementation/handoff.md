@@ -302,3 +302,20 @@ checksum and absence of unfinished migrations. Browser interaction acceptance
 remains deferred; original 181/210 unchanged. Local Docker still runs the prior
 verified UI snapshot; the server is the target of this request. The reviewed host
 fix is committed with CI skipped to avoid an unnecessary second deployment.
+
+
+## Task category colors — 2026-11-10
+
+**SP-COLORS-01 — Done (source/build):** added a typed shared palette in
+`apps/web/src/lib/event-colors.ts` for all six task categories: personal amber,
+reading purple, work cyan, university pale yellow, music rose and other slate.
+Weekly calendar events, daily/mobile event cards and task-list category badges
+use the same palette. The calendar legend identifies all six task categories
+and both fixed event types; fixed work/class calendar colors remain unchanged.
+Category controls the color; no task records, API contracts or database data changed.
+
+Verification: web typecheck, targeted ESLint (zero warnings), production web build,
+Prettier and diff checks passed. All six foreground/background pairs exceed 6.1:1
+contrast (one-off luminance calculation). Browser visual acceptance stays deferred.
+No server or local Docker rollout was performed. Original 181/210 count unchanged.
+The original Desktop mirror remains unidentified/unavailable; no document recreated.

@@ -890,3 +890,13 @@ Final completion rule: A core feature is Done only when it works with real data 
 | 2026-11-09 | Local UI/PWA runtime refresh | **Done** | Rebuilt committed `84385e4` web image and recreated only local web. | localhost:8080 general/PWA/personal UI HTTP checks passed; services healthy. | qa-report.md; handoff.md | Data/API untouched; uncommitted changes excluded; browser acceptance deferred. |
 
 | 2026-11-09 | Publish pending changes | **Done (public release)** | `f6de15b`: music category, calendar grid and task Cancel deployed; Compose migration invocation repaired forward. | Full local verification; public smoke/PWA/copy, schema checksum, backup and session/data continuity passed. | qa-report.md; handoff.md; Actions 42596150213 (failed attempt, manually recovered) | No database restore; browser acceptance deferred; no second rollout. |
+
+
+## Task category colors — authorized 2026-11-10
+
+- [x] **SP-COLORS-01 — Done (source/build):** shared distinct colors for all six task categories across weekly events, daily/mobile cards, list badges and the calendar legend. Web typecheck, targeted lint, production build, formatting/diff and palette contrast checks passed.
+- [ ] **SP-COLORS-02 — Pending:** publish the color changes and verify served assets; browser visual acceptance remains deferred.
+
+| Date | Task | Status | Implementation | Verification | Evidence | Limits |
+| --- | --- | --- | --- | --- | --- | --- |
+| 2026-11-10 | SP-COLORS-01 | **Done (source/build)** | Shared typed category palette, event/card colors, list badges and complete legend. | Web typecheck/build, targeted ESLint, Prettier/diff and six contrast pairs >6.1:1 passed. | event-colors.ts; qa-report.md; handoff.md | No deployment/browser acceptance claimed; original 181/210 unchanged; Desktop mirror unavailable. |

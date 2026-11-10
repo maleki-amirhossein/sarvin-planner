@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { api, type DTO } from "@/lib/api";
 import { useApi } from "@/lib/queries";
+import { eventColors, fixedEventColors, taskColors } from "@/lib/event-colors";
 import {
   formatJalaliDate,
   fromLocalDate,
@@ -43,7 +44,7 @@ import {
 } from "./planner-parts";
 import { QueryState } from "./query-state";
 import { SarvinWelcome } from "./sarvin-welcome";
-import { FormFeedback, useFormAction } from "./form-support";
+import { categories, FormFeedback, useFormAction } from "./form-support";
 function onDay(events: DTO["ScheduleEvent"][], day: string) {
   const start = inputInstant(day, "00:00"),
     end = inputInstant(shiftDate(day, 1), "00:00");
@@ -344,22 +345,7 @@ export function WeekPage() {
     editable: e.editable && !saving,
     durationEditable: e.resizable && !saving,
     extendedProps: { fixed: e.kind !== "task" },
-    color:
-      e.kind === "work"
-        ? "#dff3f0"
-        : e.kind === "class"
-          ? "#e4efff"
-          : e.category === "reading"
-            ? "#f0e8ff"
-            : "#fff0da",
-    contrastColor:
-      e.kind === "work"
-        ? "#00594f"
-        : e.kind === "class"
-          ? "#234d83"
-          : e.category === "reading"
-            ? "#553680"
-            : "#795013",
+    ...eventColors(e),
   }));
   return (
     <div className="week-dashboard">
@@ -448,22 +434,27 @@ export function WeekPage() {
                     className="calendar-legend"
                     aria-label="راهنمای رنگ برنامه‌ها"
                   >
-                    <li>
-                      <span className="bg-work border-primary/30" />
-                      کار
-                    </li>
-                    <li>
-                      <span className="bg-university border-blue-300" />
-                      کلاس
-                    </li>
-                    <li>
-                      <span className="bg-reading border-purple-300" />
-                      مطالعه
-                    </li>
-                    <li>
-                      <span className="bg-personal border-orange-200" />
-                      شخصی
-                    </li>
+                    {[
+                      { label: "کار ثابت", ...fixedEventColors.work },
+                      { label: "کلاس ثابت", ...fixedEventColors.class },
+                      ...Object.entries(taskColors).map(
+                        ([category, colors]) => ({
+                          label: `تسک ${categories[category as keyof typeof categories]}`,
+                          ...colors,
+                        }),
+                      ),
+                    ].map(({ label, color, contrastColor }) => (
+                      <li key={label}>
+                        <span
+                          aria-hidden="true"
+                          style={{
+                            backgroundColor: color,
+                            borderColor: contrastColor,
+                          }}
+                        />
+                        {label}
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 <DateNavigation />

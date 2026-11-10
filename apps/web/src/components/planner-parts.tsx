@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { api, type DTO } from "@/lib/api";
 import { useApi } from "@/lib/queries";
+import { eventColors, taskColors } from "@/lib/event-colors";
 import {
   formatJalaliDate,
   fromLocalDate,
@@ -263,16 +264,15 @@ export function EventCard({
       label: "ثبت مطالعه واقعی",
       action: () => editor.reading(undefined, event.id),
     });
-  const color =
-    event.kind === "work"
-      ? "border-s-primary bg-work/40"
-      : event.kind === "class"
-        ? "border-s-blue-500 bg-university/40"
-        : event.category === "reading"
-          ? "border-s-purple-500 bg-reading/40"
-          : "border-s-amber-500 bg-personal/30";
+  const colors = eventColors(event);
   return (
-    <article className={`rounded-xl border border-s-4 p-3 ${color}`}>
+    <article
+      className="rounded-xl border border-s-4 p-3"
+      style={{
+        backgroundColor: colors.color,
+        borderInlineStartColor: colors.contrastColor,
+      }}
+    >
       <div className="flex items-start gap-2">
         {event.kind === "task" ? (
           <Button
@@ -421,7 +421,16 @@ export function TaskRow({
         <div className="min-w-0 flex-1">
           <p className="break-words text-sm font-medium">{task.title}</p>
           <p className="mt-1 text-xs text-muted-foreground">
-            {categories[task.category]} · {priorities[task.priority]}
+            <span
+              className="inline-block rounded-md px-1.5 py-0.5"
+              style={{
+                backgroundColor: taskColors[task.category].color,
+                color: taskColors[task.category].contrastColor,
+              }}
+            >
+              {categories[task.category]}
+            </span>{" "}
+            · {priorities[task.priority]}
             {task.recurring
               ? " · تکرارشونده"
               : task.status === "completed"
