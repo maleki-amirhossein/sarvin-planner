@@ -222,3 +222,21 @@ lines, explicit task Cancel). Run 42596150213 failed on unsupported Compose `run
 Use `run_migrations` with `--pull never`, never `run --no-build`. Thirteen deployment
 tests include real CLI option compatibility. Public checks and session/data
 continuity passed; original failed Actions status is retained as audit history.
+
+
+## Replacement VPS — 2026-11-10
+
+Current app: **https://5.160.200.254**, SSH `amirhossein`. User explicitly chose to
+keep Ubuntu 20.04 and use a fresh database. Five migrations and a new masked owner
+are installed; credentials only in ignored mode-600 `.local/amirhossein-owner-login.json`.
+Do not re-provision/reset it or import old schedules. Echoa data/services are untouched.
+Docker 28.1.1/Compose 2.35.1 are Focal candidates, not current-platform support claims.
+Read `docs/implementation/ci-cd.md` for current variables, paths and operating commands.
+
+HTTPS/auth/PWA, API-restart session, certificate renewal dry-run, daily 03:30 Tehran
+backup and downloaded isolated restore passed. Cert renewal uses the host-installed
+script and digest-pinned Certbot container every six hours. Runtime remains host-owned;
+all backend ports private, Nginx 443/HTTP-01 80, Caddy loopback 18080. Unique guarded
+runner `amirhossein-sarvin-deploy` is online. GitHub variables/secret target it; source
+publication and actual Actions verification remain pending at this checkpoint.
+Original 181/210 unchanged; new VPS follow-up 2/3 Done. Browser control still deferred.

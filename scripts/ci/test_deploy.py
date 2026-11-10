@@ -28,6 +28,27 @@ class DeploymentBoundaryTests(unittest.TestCase):
         self.assertNotIn('--build', args)
         self.assertEqual(args[args.index('--pull') + 1], 'never')
 
+    def test_smoke_origin_uses_host_configuration(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'shared').mkdir()
+            config = root / 'shared/.env.server'
+            with patch.object(deployment, 'ROOT', root):
+                for origin in ['https://5.160.200.254', 'https://example.com:8443']:
+                    config.write_text('SESSION_SECRET=private\nPUBLIC_APP_ORIGIN=' + origin + '\n')
+                    self.assertEqual(deployment.public_origin(), origin)
+                for origin in ['http://example.com', 'https://user:password@example.com',
+                               'https://@example.com', 'https://example.com/path', 'https://example.com?x=1',
+                               'https://example.com#fragment', 'https://',
+                               'https://example.com:70000', 'https://exa mple.com']:
+                    config.write_text('PUBLIC_APP_ORIGIN=' + origin + '\n')
+                    with self.subTest(origin=origin), self.assertRaises(ValueError):
+                        deployment.public_origin()
+                for value in ['', 'PUBLIC_APP_ORIGIN=https://a\nPUBLIC_APP_ORIGIN=https://b\n']:
+                    config.write_text(value)
+                    with self.assertRaises(ValueError):
+                        deployment.public_origin()
+
     def test_only_fixed_command_is_accepted(self):
         valid = 'deploy ' + 'a' * 40 + ' 12 1 ' + 'b' * 64
         self.assertEqual(parse_command(valid)[1:3], ('12', '1'))

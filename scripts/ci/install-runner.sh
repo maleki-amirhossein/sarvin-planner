@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
+# Usage: install-runner.sh <unique-name> <host-specific-label>
 # Administrator-only bootstrap. Read a short-lived GitHub runner registration
 # token from stdin; never put an account PAT or registration token in argv/logs.
 set -euo pipefail
 umask 077
 [[ $(id -u) == 0 ]] || exit 1
+runner_name=${1:?Provide a unique runner name}
+runner_label=${2:?Provide a host-specific runner label}
+[[ $runner_name =~ ^[a-zA-Z0-9-]+$ && $runner_label =~ ^[a-zA-Z0-9-]+$ ]] || exit 1
 IFS= read -r registration_token
 runner=/opt/sarvin-runner
 script_dir=$(cd -- "$(dirname -- "$0")" && pwd)
@@ -22,7 +26,7 @@ if [[ ! -f .runner ]]; then
   export ACTIONS_RUNNER_INPUT_TOKEN="$registration_token"
   runuser -u sarvin-ci -- ./config.sh --unattended \
     --url https://github.com/maleki-amirhossein/sarvin-planner \
-    --name echoa-sarvin-deploy --labels sarvin-deploy --work _work --disableupdate
+    --name "$runner_name" --labels "$runner_label" --work _work --disableupdate
   unset ACTIONS_RUNNER_INPUT_TOKEN
 fi
 unset registration_token

@@ -910,3 +910,18 @@ Final completion rule: A core feature is Done only when it works with real data 
 | Date | Task | Status | Implementation | Verification | Evidence | Limits |
 | --- | --- | --- | --- | --- | --- | --- |
 | 2026-11-10 | SP-WELCOME-01 | **Done (source/build)** | JSON-backed random welcome h1; browser-only selection with server/hydration fallback and stable navigation. | Web typecheck/build, targeted ESLint, Prettier/diff; 80 unique IDs/texts and valid categories. | welcome-title.tsx; sarvin-welcome-messages.fa.json; qa-report.md; handoff.md | No rollout/browser acceptance claimed; original 181/210 unchanged; Desktop mirror unavailable. |
+
+
+## Replacement VPS follow-up — 2026-11-10
+
+- [x] **SP-VPS-01** — **Done** — Inspect replacement, prepare configurable CI/CD
+  target, host identity and unique runner label. Fourteen deployment tests passed.
+- [x] **SP-VPS-02** — **Done** — User chose Ubuntu 20.04/fresh DB. Provisioned runtime,
+  trusted IP HTTPS/renewal, new masked owner, five migrations and daily backups.
+  Public auth/security/PWA smoke, restart-session and downloaded restore passed.
+- [ ] **SP-VPS-03** — Publish and verify an actual Actions deployment on the guarded
+  new runner, post-deployment session/data continuity and old-runner retirement.
+
+| Date | Task | Status | Evidence | Remaining |
+| --- | --- | --- | --- | --- |
+| 2026-11-10 | SP-VPS-01/02 | **Done** | Live https://5.160.200.254; verified immutable artifact; 14 deployment tests; public auth/PWA/config checks; certificate renewal dry-run; daily backup and downloaded restore. | Actual new-host Actions deployment pending. Explicit fresh DB; no old data imported. Original 181/210 unchanged. |

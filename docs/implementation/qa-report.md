@@ -394,3 +394,32 @@ warnings, Prettier and diff checks passed. JSON parse/content checks confirmed
 80 unique IDs/texts and valid categories. No browser control was used; visual
 acceptance remains deferred. No public or local Docker rollout performed.
 Original 181/210 count unchanged; Desktop mirror remains unavailable.
+
+
+## Replacement VPS deployment — 2026-11-10
+
+**SP-VPS-01/02 — Done:** user explicitly chose Ubuntu 20.04 and a fresh database on
+`ssh amirhossein` (5.160.200.254). **https://5.160.200.254** is live with the verified
+`2f49906` build from Actions run `42765345145`. New independent secrets and owner;
+credentials saved only to ignored mode-600 `.local/amirhossein-owner-login.json`.
+No old/local data imported. Old echoa SSH/HTTPS timed out from both locations; its
+runner was offline. Its services/data were not modified.
+
+Installed Docker 28.1.1 / Compose 2.35.1 (Focal repository candidates), Nginx,
+digest-pinned Certbot 5.8.0 and a guarded non-root v2.338.2 runner. All five migrations
+applied to the fresh database. Verified trusted IP HTTPS, renewal dry-run/deploy hook,
+private backend ports, exact trusted proxy gateway, Secure host-only cookies,
+login/logout, CSRF/origin rejection, API-restart session continuity and general/PWA
+smoke. Daily backup at 03:30 Tehran succeeded. Downloaded dump restored into a
+new disposable DB: 5 migrations, 1 owner, 0 tasks/reading sessions; temporary DB removed.
+
+Prepared configurable workflow origin/SSH identity and unique repository runner
+label. Installed host gateway reads validated origin from protected host config.
+Fourteen deployment tests, shell syntax, diff checks and workflow lint passed (only
+the local linter's outdated diagnostic for existing `concurrency.queue` excluded).
+New runner is online; GitHub target variables/secret have been switched to it.
+**SP-VPS-03 remains open until an actual Actions deployment is verified.**
+
+Browser acceptance remains deferred. Automated off-server retention/notifications
+remain pending. Ubuntu 20.04 retained by explicit request; no claim of current OS
+support. Original 181/210 unchanged; Desktop mirror unavailable, not recreated.

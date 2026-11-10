@@ -120,14 +120,14 @@ Dates are displayed in Persian with Tehran timezone and Saturday week boundaries
 
 ## Server deployment
 
-The live server app is **https://87.107.160.160:8443** (no SSH tunnel required). It uses a valid IP HTTPS certificate, Secure session cookies and an independent database on `echoa`; local schedules were not imported. The existing server owner/password are unchanged. The local Docker app remains separate at port 8080.
+The live server app is **https://5.160.200.254** (no SSH tunnel required). It uses a valid IP HTTPS certificate, Secure session cookies and an fresh database on `amirhossein`; old/local schedules were not imported. New server credentials are stored privately in `.local/amirhossein-owner-login.json` (mode 600). The local Docker app remains separate at port 8080.
 
 The host Nginx TLS listener forwards to loopback-only Caddy; `compose.public-proxy.yaml` adds the public HTTPS settings after the base/tunnel configs. Use `/opt/sarvin-planner/manage` on the server. See the [server runbook](docs/implementation/deployment.md) and [verification report](docs/implementation/qa-report.md) for rollout, certificate renewal, backup and remaining acceptance details.
 
 ## Automatic CI/CD
 
 Pushes to `main` or `master` run verification and automatically deploy to
-https://87.107.160.160:8443 through GitHub Actions. Pull requests run tests only.
+https://5.160.200.254 through GitHub Actions. Pull requests run tests only.
 See [CI/CD operations](docs/implementation/ci-cd.md) for credentials, immutable
 releases, backups, rollback limits and infrastructure updates. Workflow history:
 [CI and deploy](https://github.com/maleki-amirhossein/sarvin-planner/actions/workflows/ci-cd.yml).

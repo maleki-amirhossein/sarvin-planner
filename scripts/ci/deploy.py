@@ -18,6 +18,7 @@ import tempfile
 import time
 import urllib.error
 import urllib.request
+import urllib.parse
 
 ROOT = Path('/opt/sarvin-planner')
 RUNTIME = ROOT / 'shared/runtime'
@@ -39,7 +40,10 @@ def parse_command(command):
 
 def digest(path):
     with path.open('rb') as stream:
-        return hashlib.file_digest(stream, 'sha256').hexdigest()
+        checksum = hashlib.sha256()
+        for chunk in iter(lambda: stream.read(1024 * 1024), b''):
+            checksum.update(chunk)
+        return checksum.hexdigest()
 
 
 def unpack(bundle, directory, expected):
@@ -150,8 +154,25 @@ def save_json(path, value):
     temporary.replace(path)
 
 
+def public_origin():
+    # Read only the host-owned origin; never evaluate or log the secret env file.
+    lines = (ROOT / 'shared/.env.server').read_text().splitlines()
+    values = [line.split('=', 1)[1].strip() for line in lines
+              if line.startswith('PUBLIC_APP_ORIGIN=')]
+    require(len(values) == 1, 'Configure exactly one public HTTPS origin')
+    origin = values[0]
+    parsed = urllib.parse.urlsplit(origin)
+    require(parsed.scheme == 'https' and parsed.hostname and
+            parsed.username is None and parsed.password is None and
+            not parsed.path and not parsed.query and not parsed.fragment and
+            not any(character.isspace() for character in origin),
+            'Invalid public HTTPS origin')
+    require(parsed.port is None or 1 <= parsed.port <= 65535, 'Invalid HTTPS port')
+    return origin
+
+
 def smoke():
-    origin = 'https://87.107.160.160:8443'
+    origin = public_origin()
     for attempt in range(12):
         try:
             with urllib.request.urlopen(origin + '/api/health', timeout=10) as response:
